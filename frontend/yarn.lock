@@ -11838,10 +11838,10 @@ react-media-recorder@1.6.2:
   resolved "https://registry.yarnpkg.com/react-media-recorder/-/react-media-recorder-1.6.2.tgz#eb90d12b5ea952ec27186297404d1ebaa4aca8d4"
   integrity sha512-bQsY8K8/Opvi9nmohEhgsVtWkGiAO5dWEPh0e02m0Xn/HIHaD9PoBzk2kQmwRW+jL/12Hamuw4VdQvlW6A/L1A==
 
-react-player@2.9.0:
-  version "2.9.0"
-  resolved "https://registry.yarnpkg.com/react-player/-/react-player-2.9.0.tgz#ef7fe7073434087565f00ff219824e1e02c4b046"
-  integrity sha512-jNUkTfMmUhwPPAktAdIqiBcVUKsFKrVGH6Ocutj6535CNfM91yrvWxHg6fvIX8Y/fjYUPoejddwh7qboNV9vGA==
+react-player@2.11.0:
+  version "2.11.0"
+  resolved "https://registry.yarnpkg.com/react-player/-/react-player-2.11.0.tgz#9afc75314eb915238e8d6615b2891fbe7170aeaa"
+  integrity sha512-fIrwpuXOBXdEg1FiyV9isKevZOaaIsAAtZy5fcjkQK9Nhmk1I2NXzY/hkPos8V0zb/ZX416LFy8gv7l/1k3a5w==
   dependencies:
     deepmerge "^4.0.0"
     load-script "^1.0.0"
