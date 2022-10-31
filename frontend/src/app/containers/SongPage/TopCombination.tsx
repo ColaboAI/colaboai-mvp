@@ -94,7 +94,7 @@ export default function TopCombination(props: Props) {
     ) : (
       <tr>
         <td colSpan={5} className={styles.th}>
-          There are no combinations yet.
+          아직 만들어진 콜라보가 없습니다 :(
         </td>
       </tr>
     );
@@ -103,17 +103,17 @@ export default function TopCombination(props: Props) {
   return (
     <div data-testid="TopCombination" className="mt-8 flex flex-col">
       <h2 className="pl-4 sm:pl-0 text-left text-sm font-bold text-gray-600 tracking-wider">
-        TOP META-BANDS
+        베스트 콜라보
       </h2>
       <div className="mt-4 shadow border-b border-gray-200 sm:rounded-lg">
         <table className="table-fixed w-full">
           <thead className="bg-gray-50">
             <tr>
               <th scope="col" className={styles.th}>
-                RANK
+                순위
               </th>
               <th scope="col" className={styles.th + ' w-1/2 sm:w-2/3'}>
-                COVERS
+                콜라보 구성
               </th>
               <th scope="col" className={styles.th}>
                 <FontAwesomeIcon icon={faPlay} />

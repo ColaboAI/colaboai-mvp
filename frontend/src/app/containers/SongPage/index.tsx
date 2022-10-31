@@ -18,7 +18,7 @@ import SongInfoArea from './SongInfoArea';
 import TopCombination from './TopCombination';
 import CombinationArea from './CombinationArea';
 import TopCover from './TopCover';
-
+import Comment from 'app/components/Comment';
 interface MatchParams {
   id?: string;
 }
@@ -161,6 +161,7 @@ export default function SongPage(props: Props) {
           />
         )}
         {renderTopCover()}
+        <Comment />
       </div>
     </div>
   );
