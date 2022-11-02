@@ -10,6 +10,7 @@ from band.views import (
     combination_views,
     song_views,
     log_views,
+    comment_views,
 )
 
 urlpatterns = [
@@ -54,9 +55,22 @@ urlpatterns = [
     path("song/search/", song_views.SongSearch.as_view(), name="song_search"),
     path("song/info/<int:pk>/", song_views.SongInfo.as_view(), name="song_info"),
     path("song/", song_views.SongView.as_view(), name="song"),
-
     # Log urls
     path("log/cover/", log_views.CoverLogsView.as_view(), name="log_cover"),
-    path("log/combination/", log_views.CombinationLogsView.as_view(), name="log_combination"),
-
+    path(
+        "log/combination/",
+        log_views.CombinationLogsView.as_view(),
+        name="log_combination",
+    ),
+    # Commnet urls
+    path(
+        "cover/<int:cover_id>/comment/",
+        comment_views.CoverCommentView.as_view(),
+        name="cover_comment",
+    ),
+    path(
+        "cover/<int:cover_id>/comment/<int:pk>/",
+        comment_views.CoverCommentInfoView.as_view(),
+        name="cover_comment_info",
+    ),
 ]

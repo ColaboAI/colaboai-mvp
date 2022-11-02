@@ -134,7 +134,7 @@ class Combination(models.Model):
 class CoverTag(models.Model):
     """CoverTag model"""
 
-    name: str = CharField(max_length=30, db_column="name")
+    name: str = CharField(max_length=30, db_column="name", unique=True)
 
     class Meta:
         db_table = "CoverTag"
@@ -171,8 +171,60 @@ class CombinationLog(models.Model):
 class RecoSong(models.Model):
     """RecoSong model
     load from s3 refresh every 6 hours"""
+
     song: Song = ForeignKey(Song, on_delete=models.CASCADE)
     recos = models.CharField(max_length=50, db_column="recos")
 
     class Meta:
         db_table = "RecoSong"
+
+
+class CommentBase(models.Model):
+    """CoverComment model"""
+
+    user: User = ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField(db_column="comment")
+    timestamp = models.DateTimeField(auto_now_add=True)
+    likes = ManyToManyField(
+        User,
+        related_name="%(app_label)s_%(class)s_Likes",
+        blank=True,
+    )
+    parent_comment = models.ForeignKey("self", on_delete=models.CASCADE, null=True)
+
+    @property
+    def like_count(self) -> int:
+        return self.likes.count()
+
+    def __str__(self):
+        return f"([{self.pk}] {self.user}'s comment)"
+
+    class Meta:
+        abstract = True
+
+
+class CoverComment(CommentBase):
+    """CoverComment model"""
+
+    cover: Cover = ForeignKey(Cover, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = "CoverComment"
+
+
+class SongComment(CommentBase):
+    """SongComment model"""
+
+    song: Song = ForeignKey(Song, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = "SongComment"
+
+
+class CombinationComment(CommentBase):
+    """CombinationComment model"""
+
+    combination: Combination = ForeignKey(Combination, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = "CombinationComment"

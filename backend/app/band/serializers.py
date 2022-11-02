@@ -6,11 +6,13 @@ from rest_framework import serializers
 from user.serializers import UserSerializer
 from common.proxy_file_field import ProxyFileField
 from .models import (
+    CoverComment,
     CoverTag,
     Instrument,
     Song,
     Cover,
     Combination,
+    SongComment,
 )
 
 
@@ -42,12 +44,19 @@ class CoverSerializer(serializers.ModelSerializer):
     instrument_id = serializers.IntegerField(write_only=True)
     tags = serializers.SlugRelatedField(many=True, read_only=True, slug_field="name")
     tags_list = serializers.ListField(write_only=True, required=False)
+    likes = serializers.SlugRelatedField(
+        many=True, read_only=True, slug_field="username"
+    )
     # override
     def create(self, validated_data: dict):
         if validated_data.get("tags_list") is not None:
             tags_list = validated_data.pop("tags_list")
-            validated_data["tags"] = CoverTag.objects.filter(name__in=tags_list)
-
+            # validated_data["tags"] = CoverTag.objects.filter(name__in=tags_list)
+            exist_tags = CoverTag.objects.filter(name__in=tags_list)
+            new_tags = set(*tags_list) - set(list(exist_tags))
+            new_tags = [CoverTag(name=tag) for tag in new_tags if tag]
+            CoverTag.objects.bulk_create(new_tags)
+            validated_data["tags"] = CoverTag.objects.filter(name__in=tags_list[0])
         return super().create(validated_data)
 
     # override
@@ -78,6 +87,7 @@ class CoverSerializer(serializers.ModelSerializer):
             "song_id",
             "instrument_id",
             "tags_list",
+            "likes",
         ]
 
 
@@ -132,4 +142,39 @@ class CombinationLikeSerializer(serializers.ModelSerializer):
             "id",
             "likes",
             "like_count",
+        ]
+
+
+class CoverCommentSerializer(serializers.ModelSerializer):
+    """Serializer for comment of Cover"""
+
+    user = UserSerializer(many=False, read_only=True)
+    user_id = serializers.IntegerField(write_only=True)
+    cover = CoverSerializer(many=False, read_only=True)
+    cover_id = serializers.IntegerField(write_only=True)
+
+    parent_comment_id = serializers.IntegerField(
+        write_only=True, required=False, allow_null=True
+    )
+
+    # override
+    def create(self, validated_data: dict):
+        return super().create(validated_data)
+
+    # override
+    def update(self, instance, validated_data: dict):
+        instance: CoverComment = super().update(instance, validated_data)
+        return instance
+
+    class Meta:
+        model = CoverComment
+        fields = [
+            "id",
+            "content",
+            "timestamp",
+            "parent_comment_id",
+            "user",
+            "cover_id",
+            "user_id",
+            "cover",
         ]

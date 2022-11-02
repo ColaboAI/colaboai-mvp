@@ -14,10 +14,6 @@ from band.models import Cover, Song
 from band.serializers import CoverSerializer, CoverLikeSerializer
 
 
-# pylint: disable=W0613
-# disable unused-argument warning, duplicate code
-
-
 class CoverSong(mixins.ListModelMixin, generics.GenericAPIView):
     """cover/<int:song_id>/"""
 
@@ -53,7 +49,8 @@ class CoverSong(mixins.ListModelMixin, generics.GenericAPIView):
             data["instrument_id"] = int(instrument_id[0])
         except (KeyError, ValueError):
             return Response(
-                "'instrument' should be a number.", status=status.HTTP_400_BAD_REQUEST,
+                "'instrument' should be a number.",
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         # check tags
@@ -63,7 +60,8 @@ class CoverSong(mixins.ListModelMixin, generics.GenericAPIView):
                 tags_list = json.loads(tags[0])
             except JSONDecodeError:
                 return Response(
-                    "'tags' is not in json format.", status=status.HTTP_400_BAD_REQUEST,
+                    "'tags' is not in json format.",
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
             data["tags_list"] = tags_list
         serializer: CoverSerializer = self.get_serializer(data=data)
