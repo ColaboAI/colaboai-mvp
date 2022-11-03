@@ -26,6 +26,22 @@ class Instrument(models.Model):
         db_table = "Instrument"
 
 
+class Category(models.Model):
+    """
+    Model for Category
+    :type name: str
+    :field name: The name of category
+    """
+
+    name: str = models.CharField(max_length=30, db_column="name")
+
+    def __str__(self):
+        return f"([{self.pk}] {self.name})"
+
+    class Meta:
+        db_table = "Category"
+
+
 class Song(models.Model):
     """Model for Song
     :field title: The title of this song
@@ -40,6 +56,8 @@ class Song(models.Model):
     category: str = models.CharField(max_length=30, db_column="category")
     reference: str = models.CharField(max_length=255, db_column="reference")
     description: str = models.TextField(db_column="description", blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"([{self.pk}] {self.title})"
@@ -66,7 +84,8 @@ class Cover(models.Model):
     audio = models.FileField(upload_to="cover_audio", editable=False)
     title: str = models.CharField(max_length=50, db_column="title")
     category: str = models.CharField(
-        max_length=30, db_column="category", editable=False
+        max_length=30,
+        db_column="category",
     )
     description: str = models.TextField(db_column="description", blank=True)
     user: User = ForeignKey(
@@ -88,6 +107,8 @@ class Cover(models.Model):
         null=True,
         blank=True,
     )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def count_views(self) -> int:
         return CoverLog.objects.filter(cover=self).count()
@@ -112,6 +133,7 @@ class Combination(models.Model):
     likes = ManyToManyField(
         User, db_table="Combination_Likes", related_name="like_combinations", blank=True
     )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     @property
     def like_count(self) -> int:
@@ -182,15 +204,24 @@ class RecoSong(models.Model):
 class CommentBase(models.Model):
     """CoverComment model"""
 
-    user: User = ForeignKey(User, on_delete=models.CASCADE)
+    user: User = ForeignKey(
+        User, related_name="%(app_label)s_%(class)s_comments", on_delete=models.CASCADE
+    )
     content = models.TextField(db_column="comment")
-    timestamp = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     likes = ManyToManyField(
         User,
         related_name="%(app_label)s_%(class)s_Likes",
         blank=True,
     )
-    parent_comment = models.ForeignKey("self", on_delete=models.CASCADE, null=True)
+    parent_comment = models.ForeignKey(
+        "self",
+        related_name="reply",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
 
     @property
     def like_count(self) -> int:
