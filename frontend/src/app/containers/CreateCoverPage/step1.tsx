@@ -113,7 +113,13 @@ export default function CreateCoverRecord(props: Props) {
   const { status, startRecording, stopRecording, mediaBlobUrl } =
     useReactMediaRecorder({
       onStop: getBlobFromRecorder,
-      audio: true,
+      audio: {
+        autoGainControl: false,
+        echoCancellation: true,
+        noiseSuppression: false,
+        sampleRate: 44100,
+        sampleSize: 16,
+      },
     });
 
   const handleMergeList = (id: string, isMerge: boolean) => {
