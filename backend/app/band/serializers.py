@@ -6,6 +6,7 @@ from rest_framework import serializers
 from user.serializers import UserSerializer
 from common.proxy_file_field import ProxyFileField
 from .models import (
+    Category,
     CoverComment,
     CoverTag,
     Instrument,
@@ -13,6 +14,7 @@ from .models import (
     Cover,
     Combination,
     SongComment,
+    CombinationComment,
 )
 
 
@@ -24,12 +26,37 @@ class InstrumentSerializer(serializers.ModelSerializer):
         fields = ["id", "name"]
 
 
+class CategorySerializer(serializers.ModelSerializer):
+    """Serializer for Category"""
+
+    class Meta:
+        model = Category
+        fields = ["id", "name"]
+
+
 class SongSerializer(serializers.ModelSerializer):
     """Serializer for song"""
 
     class Meta:
         model = Song
-        fields = ["id", "title", "singer", "category", "reference", "description"]
+        fields = [
+            "id",
+            "title",
+            "singer",
+            "category",
+            "reference",
+            "description",
+            "created_at",
+            "updated_at",
+        ]
+        update_fields = [
+            "title",
+            "singer",
+            "category",
+            "reference",
+            "description",
+            "updated_at",
+        ]
 
 
 class CoverSerializer(serializers.ModelSerializer):
@@ -51,9 +78,10 @@ class CoverSerializer(serializers.ModelSerializer):
     def create(self, validated_data: dict):
         if validated_data.get("tags_list") is not None:
             tags_list = validated_data.pop("tags_list")
-            # validated_data["tags"] = CoverTag.objects.filter(name__in=tags_list)
-            exist_tags = CoverTag.objects.filter(name__in=tags_list)
-            new_tags = set(*tags_list) - set(list(exist_tags))
+            exist_tags = CoverTag.objects.filter(name__in=tags_list[0]).values_list(
+                "name", flat=True
+            )
+            new_tags = set(tags_list[0]) - set(exist_tags)
             new_tags = [CoverTag(name=tag) for tag in new_tags if tag]
             CoverTag.objects.bulk_create(new_tags)
             validated_data["tags"] = CoverTag.objects.filter(name__in=tags_list[0])
@@ -74,6 +102,23 @@ class CoverSerializer(serializers.ModelSerializer):
             "id",
             "audio",
             "title",
+            "description",
+            "category",
+            "user",
+            "instrument",
+            "song",
+            "tags",
+            "like_count",
+            "view",
+            "user_id",
+            "song_id",
+            "instrument_id",
+            "tags_list",
+            "likes",
+        ]
+        update_fields = [
+            "audio",
+            "title",
             "category",
             "description",
             "user",
@@ -82,12 +127,12 @@ class CoverSerializer(serializers.ModelSerializer):
             "tags",
             "like_count",
             "view",
-            # "combination",
-            "user_id",
-            "song_id",
+            "updated_at",
             "instrument_id",
             "tags_list",
             "likes",
+            "user_id",
+            "song_id",
         ]
 
 
@@ -148,14 +193,9 @@ class CombinationLikeSerializer(serializers.ModelSerializer):
 class CoverCommentSerializer(serializers.ModelSerializer):
     """Serializer for comment of Cover"""
 
-    user = UserSerializer(many=False, read_only=True)
-    user_id = serializers.IntegerField(write_only=True)
-    cover = CoverSerializer(many=False, read_only=True)
-    cover_id = serializers.IntegerField(write_only=True)
-
-    parent_comment_id = serializers.IntegerField(
-        write_only=True, required=False, allow_null=True
-    )
+    user_id = serializers.IntegerField()
+    cover_id = serializers.IntegerField()
+    reply = serializers.SerializerMethodField()
 
     # override
     def create(self, validated_data: dict):
@@ -171,10 +211,115 @@ class CoverCommentSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "content",
-            "timestamp",
-            "parent_comment_id",
-            "user",
-            "cover_id",
+            "parent_comment",
+            "reply",
             "user_id",
-            "cover",
+            "cover_id",
+            "created_at",
+            "updated_at",
         ]
+        update_fields = [
+            "content",
+            "parent_comment",
+            "user_id",
+            "cover_id",
+            "updated_at",
+        ]
+
+    def get_reply(self, instance):
+        serializer = self.__class__(
+            instance.reply,
+            many=True,
+        )
+        serializer.bind("", self)
+        return serializer.data
+
+
+class SongCommentSerializer(serializers.ModelSerializer):
+    """Serializer for comment of Cover"""
+
+    user_id = serializers.IntegerField()
+    song_id = serializers.IntegerField()
+    reply = serializers.SerializerMethodField()
+
+    # override
+    def create(self, validated_data: dict):
+        return super().create(validated_data)
+
+    # override
+    def update(self, instance, validated_data: dict):
+        instance: SongComment = super().update(instance, validated_data)
+        return instance
+
+    class Meta:
+        model = SongComment
+        fields = [
+            "id",
+            "content",
+            "parent_comment",
+            "reply",
+            "user_id",
+            "song_id",
+            "created_at",
+            "updated_at",
+        ]
+        update_fields = [
+            "content",
+            "parent_comment",
+            "user_id",
+            "song_id",
+            "updated_at",
+        ]
+
+    def get_reply(self, instance):
+        serializer = self.__class__(
+            instance.reply,
+            many=True,
+        )
+        serializer.bind("", self)
+        return serializer.data
+
+
+class CombinationCommentSerializer(serializers.ModelSerializer):
+    """Serializer for comment of Cover"""
+
+    user_id = serializers.IntegerField()
+    combination_id = serializers.IntegerField()
+    reply = serializers.SerializerMethodField()
+
+    # override
+    def create(self, validated_data: dict):
+        return super().create(validated_data)
+
+    # override
+    def update(self, instance, validated_data: dict):
+        instance: CombinationComment = super().update(instance, validated_data)
+        return instance
+
+    class Meta:
+        model = CombinationComment
+        fields = [
+            "id",
+            "content",
+            "parent_comment",
+            "reply",
+            "user_id",
+            "combination_id",
+            "created_at",
+            "updated_at",
+        ]
+        update_fields = [
+            "content",
+            "parent_comment",
+            "user_id",
+            "combination_id",
+            "updated_at",
+        ]
+
+    def get_reply(self, instance):
+        serializer = self.__class__(
+            instance.reply,
+            many=True,
+        )
+        serializer.bind("", self)
+        return serializer.data

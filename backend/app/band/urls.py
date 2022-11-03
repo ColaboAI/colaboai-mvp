@@ -11,6 +11,7 @@ from band.views import (
     song_views,
     log_views,
     comment_views,
+    category_views,
 )
 
 urlpatterns = [
@@ -20,6 +21,12 @@ urlpatterns = [
         "instrument/",
         instrument_views.InstrumentView.as_view({"get": "list"}),
         name="instrument",
+    ),
+    # category urls
+    path(
+        "category/",
+        category_views.CategoryViews.as_view({"get": "list"}),
+        name="category",
     ),
     # cover urls
     path("cover/info/<int:pk>/", cover_views.CoverInfo.as_view(), name="cover_info"),
@@ -72,5 +79,25 @@ urlpatterns = [
         "cover/<int:cover_id>/comment/<int:pk>/",
         comment_views.CoverCommentInfoView.as_view(),
         name="cover_comment_info",
+    ),
+    path(
+        "combination/<int:combination_id>/comment/",
+        comment_views.CombinationCommentView.as_view(),
+        name="combination_comment",
+    ),
+    path(
+        "combination/<int:combination_id>/comment/<int:pk>/",
+        comment_views.CombinationCommentInfoView.as_view(),
+        name="combination_comment_info",
+    ),
+    path(
+        "song/<int:song_id>/comment/",
+        comment_views.SongCommentView.as_view(),
+        name="song_comment",
+    ),
+    path(
+        "song/<int:song_id>/comment/<int:pk>/",
+        comment_views.SongCommentInfoView.as_view(),
+        name="song_comment_info",
     ),
 ]
