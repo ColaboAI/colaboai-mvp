@@ -5,7 +5,23 @@ from .models import (
     Cover,
     Combination,
     CoverTag,
+    Category,
+    CoverComment,
+    SongComment,
+    CombinationComment,
 )
 
 # Register your models here.
-admin.site.register([Instrument, Song, Cover, Combination, CoverTag])
+admin.site.register(
+    [
+        Category,
+        Instrument,
+        Song,
+        Cover,
+        Combination,
+        CoverTag,
+        CoverComment,
+        SongComment,
+        CombinationComment,
+    ]
+)
