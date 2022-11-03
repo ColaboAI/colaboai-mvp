@@ -24,8 +24,6 @@ export default function CreateSongPage(props: Props) {
     description: '',
   });
 
-  const categories = ['Pop', 'Rock', 'Hip-hop', 'Jazz'];
-
   const onChangeForm = (
     e: React.FormEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -107,19 +105,13 @@ export default function CreateSongPage(props: Props) {
                 <label htmlFor="category" className={styles.label}>
                   Category
                 </label>
-                <select
+                <input
                   name="category"
                   id="category"
                   value={Form.category}
                   onChange={e => onChangeForm(e, 'category')}
-                  className="mt-1 block w-full py-1 border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                >
-                  {categories.map((item, index) => (
-                    <option data-testid="option" value={item} key={index}>
-                      {item}
-                    </option>
-                  ))}
-                </select>
+                  className={styles.input}
+                ></input>
               </div>
 
               <div className="col-span-6">
