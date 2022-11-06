@@ -12,6 +12,10 @@ export default function* songPageSaga() {
   yield takeEvery(AT.LOAD_COMBINATIONS.REQUEST, getCombinationsRequest);
   yield takeEvery(AT.LOAD_COVERS_SONG.REQUEST, getCoversRequest);
   yield takeEvery(AT.LOAD_INSTRUMENTS.REQUEST, getInstrumentsRequest);
+  yield takeEvery(AT.CREATE_SONG_COMMENT.REQUEST, postSongCommentRequest);
+  yield takeEvery(AT.LOAD_SONG_COMMENTS.REQUEST, getSongCommentsRequest);
+  yield takeEvery(AT.DELETE_SONG_COMMENT.REQUEST, deleteSongCommentRequest);
+  yield takeEvery(AT.EDIT_SONG_COMMENT.REQUEST, editSongCommentRequest);
 }
 
 export function* getSongRequest(
@@ -71,5 +75,55 @@ export function* getInstrumentsRequest(
     yield put(songActions.successInstrumentsResponse(response));
   } catch (e: any) {
     yield put(songActions.errorInstrumentsResponse(e));
+  }
+}
+
+export function* getSongCommentsRequest(
+  action: ActionType<typeof actions.loadSongComments.request>,
+) {
+  yield put(
+    songActions.loadingSongCommentsResponse('start loading Song Comments'),
+  );
+  try {
+    const response = yield api.getSongComments(action.payload);
+    yield put(songActions.successSongCommentsResponse(response));
+  } catch (e: any) {
+    yield put(songActions.errorSongCommentsResponse(e));
+  }
+}
+
+export function* postSongCommentRequest(
+  action: ActionType<typeof actions.createSongComment.request>,
+) {
+  yield put(songActions.loadingCreateCommentResponse('start Posting Comment'));
+  try {
+    const response = yield api.postSongComment(action.payload);
+    yield put(songActions.successCreateCommentResponse(response));
+  } catch (e: any) {
+    yield put(songActions.errorCreateCommentResponse(e));
+  }
+}
+
+export function* deleteSongCommentRequest(
+  action: ActionType<typeof actions.deleteSongComment.request>,
+) {
+  yield put(songActions.loadingDeleteCommentResponse('start Deleting Comment'));
+  try {
+    const response = yield api.deleteSongComment(action.payload);
+    yield put(songActions.successDeleteCommentResponse(response));
+  } catch (e: any) {
+    yield put(songActions.errorDeleteCommentResponse(e));
+  }
+}
+
+export function* editSongCommentRequest(
+  action: ActionType<typeof actions.editSongComment.request>,
+) {
+  yield put(songActions.loadingEditCommentResponse('start Editing Comment'));
+  try {
+    const response = yield api.editSongComment(action.payload);
+    yield put(songActions.successEditCommentResponse(response));
+  } catch (e: any) {
+    yield put(songActions.errorEditCommentResponse(e));
   }
 }

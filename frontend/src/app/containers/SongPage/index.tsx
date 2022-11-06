@@ -19,6 +19,8 @@ import TopCombination from './TopCombination';
 import CombinationArea from './CombinationArea';
 import TopCover from './TopCover';
 import Comment from 'app/components/Comment';
+import { selectWrapper } from 'app/wrapper/slice/selectors';
+import toast from 'react-hot-toast';
 interface MatchParams {
   id?: string;
 }
@@ -32,6 +34,7 @@ export default function SongPage(props: Props) {
   const songState = useSelector(selectSong);
   const combination = useSelector(selectCombination);
   const current = useSelector(selectCurrent);
+  const wrapperState = useSelector(selectWrapper);
   const [recordWait, setRecordWait] = useState(false);
 
   // loading
@@ -40,6 +43,8 @@ export default function SongPage(props: Props) {
   const combinationsResponse = songState.combinationsResponse;
   const coversResponse = songState.coversResponse;
   const instrumentsResponse = songState.instrumentsResponse;
+  const commentsResponse = songState.commentsResponse;
+  const user = wrapperState.user;
 
   useEffect(() => {
     dispatch(apiActions.loadSong.request(Number(props.match.params.id)));
@@ -48,6 +53,9 @@ export default function SongPage(props: Props) {
     );
     dispatch(apiActions.loadCoversSong.request(Number(props.match.params.id)));
     dispatch(apiActions.loadInstruments.request());
+    dispatch(
+      apiActions.loadSongComments.request(Number(props.match.params.id)),
+    );
   }, [dispatch, props.match]);
 
   useEffect(() => {
@@ -137,8 +145,39 @@ export default function SongPage(props: Props) {
     setRecordWait(true);
   }, [onClickPlay]);
 
+  const onCommentSubmit = useCallback(
+    (
+      content: string,
+      parentComment: number | null,
+      setNewText: (text: string) => void,
+    ) => {
+      if (user) {
+        if (content) {
+          dispatch(
+            apiActions.createSongComment.request({
+              songId: Number(props.match.params.id),
+              content,
+              parentComment,
+              userId: user.id,
+            }),
+          );
+          setNewText('');
+          toast.success('댓글이 정상적으로 작성되었습니다.');
+        } else {
+          toast.error('내용을 입력해주세요.');
+        }
+      } else {
+        toast.error('로그인 후 댓글 작성 가능합니다.');
+      }
+    },
+    [dispatch, props.match.params.id, user],
+  );
+
   return (
-    <div data-testid="SongPage" className="flex justify-center h-full">
+    <div
+      data-testid="SongPage"
+      className="flex justify-center h-full overflow-scroll"
+    >
       <div className="flex flex-col w-screen sm:w-full sm:px-8 max-w-screen-lg">
         {songResponse.data && (
           <SongInfoArea
@@ -161,7 +200,14 @@ export default function SongPage(props: Props) {
           />
         )}
         {renderTopCover()}
-        <Comment />
+        {songResponse.data && commentsResponse.data && (
+          <Comment
+            commentList={commentsResponse.data}
+            onCommentSubmit={onCommentSubmit}
+            parentObjectId={songResponse.data.id}
+            parentObjectType="song"
+          />
+        )}
       </div>
     </div>
   );

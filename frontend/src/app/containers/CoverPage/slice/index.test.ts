@@ -35,24 +35,19 @@ test('return init when state is null', () => {
 
 test('should handle cover response state', () => {
   const stateInit: CoverState = {
-    name: '',
-    coverResponse: { loading: false },
-    deleteResponse: { loading: false },
+    ...initialState,
   };
   const stateLoading: CoverState = {
-    name: '',
+    ...initialState,
     coverResponse: { loading: true },
-    deleteResponse: { loading: false },
   };
   const stateSuccess: CoverState = {
-    name: '',
+    ...initialState,
     coverResponse: { loading: false, data: 'MOCK' as any },
-    deleteResponse: { loading: false },
   };
   const stateError: CoverState = {
-    name: '',
+    ...initialState,
     coverResponse: { loading: false, error: 'MOCK_ERROR' },
-    deleteResponse: { loading: false },
   };
 
   expect(
