@@ -1,6 +1,6 @@
 import axios from 'axios';
-
-const apiClient = axios.create();
+import applyCaseMiddleware from 'axios-case-converter';
+const apiClient = applyCaseMiddleware(axios.create());
 
 apiClient.defaults.xsrfCookieName = 'csrftoken';
 apiClient.defaults.xsrfHeaderName = 'X-CSRFToken';

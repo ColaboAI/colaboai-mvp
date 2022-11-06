@@ -1,5 +1,4 @@
 import { apiClient } from './client';
-
 export const api = {
   // users
   signup: async (form: SignUpForm) => {
@@ -194,5 +193,69 @@ export const api = {
       combination_id: combinationId,
     });
     return response;
+  },
+
+  // `/api/song/<id:int>/comment`
+  getSongComments: async (id: number) => {
+    const response = await apiClient.get<SongComment[]>(
+      `/api/song/${id}/comment/`,
+    );
+    return response.data;
+  },
+
+  postSongComment: async (form: SongCommentForm) => {
+    const res = await apiClient.post<SongComment>(
+      `/api/song/${form.songId}/comment/`,
+      form,
+    );
+    return res.data;
+  },
+
+  // `/api/song/<song_id:int>/comment/<comment_id:int>``
+  deleteSongComment: async (form: DeleteCommentForm) => {
+    await apiClient.delete<null>(
+      `/api/song/${form.parentObjectId}/comment/${form.commentId}/`,
+    );
+    return form.commentId;
+  },
+  editSongComment: async (form: SongCommentForm) => {
+    const res = await apiClient.put<SongComment>(
+      `/api/song/comment/${form.id}/`,
+      form,
+    );
+    return res.data;
+  },
+
+  // `/api/cover/<id:int>/comment`
+  getCoverComments: async (id: number) => {
+    const response = await apiClient.get<CoverComment[]>(
+      `/api/cover/${id}/comment/`,
+    );
+    return response.data;
+  },
+
+  postCoverComment: async (form: CoverCommentForm) => {
+    const res = await apiClient.post<CoverComment>(
+      `/api/cover/${form.coverId}/comment/`,
+
+      form,
+    );
+    return res.data;
+  },
+
+  // `/api/cover/<cover_id:int>/comment/<comment_id:int>``
+  deleteCoverComment: async (form: DeleteCommentForm) => {
+    await apiClient.delete<null>(
+      `/api/cover/${form.parentObjectId}/comment/${form.commentId}/`,
+    );
+    return form.commentId;
+  },
+
+  editCoverComment: async (form: CoverCommentForm) => {
+    const res = await apiClient.put<CoverComment>(
+      `/api/cover/${form.coverId}/comment/${form.id}/`,
+      form,
+    );
+    return res.data;
   },
 };

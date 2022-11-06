@@ -34,6 +34,28 @@ export const deleteCover = asyncAction<number, number, AxiosError>(
 export const createCover = asyncAction<CoverForm, Cover, AxiosError>(
   AT.CREATE_COVER,
 );
+export const loadCoverComments = asyncAction<
+  number,
+  CoverComment[],
+  AxiosError
+>(AT.LOAD_COVER_COMMENTS);
+export const createCoverComment = asyncAction<
+  CoverCommentForm,
+  CoverComment,
+  AxiosError
+>(AT.CREATE_COVER_COMMENT);
+
+export const editCoverComment = asyncAction<
+  CoverCommentForm,
+  CoverComment,
+  AxiosError
+>(AT.EDIT_COVER_COMMENT);
+
+export const deleteCoverComment = asyncAction<
+  DeleteCommentForm,
+  number,
+  AxiosError
+>(AT.DELETE_COVER_COMMENT);
 
 // combination actions
 export const createCombination = asyncAction<
@@ -69,3 +91,25 @@ export const loadSong = asyncAction<number, Song, AxiosError>(AT.LOAD_SONG);
 export const loadSongsSearch = asyncAction<string, Song[], AxiosError>(
   AT.LOAD_SONGS_SEARCH,
 );
+
+export const loadSongComments = asyncAction<number, SongComment[], AxiosError>(
+  AT.LOAD_SONG_COMMENTS,
+);
+
+export const createSongComment = asyncAction<
+  SongCommentForm,
+  SongComment,
+  AxiosError
+>(AT.CREATE_SONG_COMMENT);
+
+export const editSongComment = asyncAction<
+  SongCommentForm,
+  SongComment,
+  AxiosError
+>(AT.EDIT_SONG_COMMENT);
+
+export const deleteSongComment = asyncAction<
+  DeleteCommentForm,
+  number,
+  AxiosError
+>(AT.DELETE_SONG_COMMENT);
