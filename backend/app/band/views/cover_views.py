@@ -143,7 +143,7 @@ class CoverLike(generics.GenericAPIView):
         serializer_old: CoverLikeSerializer = self.get_serializer(instance)
         likes: list = serializer_old.data.get("likes")
 
-        is_like = request.data.get("isLiked")
+        is_like = request.data.get("is_liked")
         if is_like is None:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 

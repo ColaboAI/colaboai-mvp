@@ -193,10 +193,10 @@ class CombinationLikeSerializer(serializers.ModelSerializer):
 class CoverCommentSerializer(serializers.ModelSerializer):
     """Serializer for comment of Cover"""
 
-    user_id = serializers.IntegerField()
+    user_id = serializers.IntegerField(write_only=True)
     cover_id = serializers.IntegerField()
     reply = serializers.SerializerMethodField()
-
+    user = UserSerializer(many=False, read_only=True)
     # override
     def create(self, validated_data: dict):
         return super().create(validated_data)
@@ -213,10 +213,12 @@ class CoverCommentSerializer(serializers.ModelSerializer):
             "content",
             "parent_comment",
             "reply",
+            "user",
             "user_id",
             "cover_id",
             "created_at",
             "updated_at",
+            "likes",
         ]
         update_fields = [
             "content",
@@ -224,6 +226,7 @@ class CoverCommentSerializer(serializers.ModelSerializer):
             "user_id",
             "cover_id",
             "updated_at",
+            "likes",
         ]
 
     def get_reply(self, instance):
@@ -238,9 +241,10 @@ class CoverCommentSerializer(serializers.ModelSerializer):
 class SongCommentSerializer(serializers.ModelSerializer):
     """Serializer for comment of Cover"""
 
-    user_id = serializers.IntegerField()
+    user_id = serializers.IntegerField(write_only=True)
     song_id = serializers.IntegerField()
     reply = serializers.SerializerMethodField()
+    user = UserSerializer(many=False, read_only=True)
 
     # override
     def create(self, validated_data: dict):
@@ -259,9 +263,11 @@ class SongCommentSerializer(serializers.ModelSerializer):
             "parent_comment",
             "reply",
             "user_id",
+            "user",
             "song_id",
             "created_at",
             "updated_at",
+            "likes",
         ]
         update_fields = [
             "content",
@@ -269,6 +275,7 @@ class SongCommentSerializer(serializers.ModelSerializer):
             "user_id",
             "song_id",
             "updated_at",
+            "likes",
         ]
 
     def get_reply(self, instance):
@@ -283,10 +290,10 @@ class SongCommentSerializer(serializers.ModelSerializer):
 class CombinationCommentSerializer(serializers.ModelSerializer):
     """Serializer for comment of Cover"""
 
-    user_id = serializers.IntegerField()
+    user_id = serializers.IntegerField(write_only=True)
     combination_id = serializers.IntegerField()
     reply = serializers.SerializerMethodField()
-
+    user = UserSerializer(many=False, read_only=True)
     # override
     def create(self, validated_data: dict):
         return super().create(validated_data)
@@ -304,9 +311,11 @@ class CombinationCommentSerializer(serializers.ModelSerializer):
             "parent_comment",
             "reply",
             "user_id",
+            "user",
             "combination_id",
             "created_at",
             "updated_at",
+            "likes",
         ]
         update_fields = [
             "content",
@@ -314,6 +323,7 @@ class CombinationCommentSerializer(serializers.ModelSerializer):
             "user_id",
             "combination_id",
             "updated_at",
+            "likes",
         ]
 
     def get_reply(self, instance):
