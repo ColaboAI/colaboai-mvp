@@ -154,7 +154,7 @@ describe('AudioEditor.ts test', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     spyArrBufToWav = jest
-      .spyOn(WavToMp3, 'audioBufferToWav')
+      .spyOn(WavToMp3, 'audioBufferToMp3')
       .mockImplementation(
         jest.fn(() => ({
           fileFromBlob: new File([new ArrayBuffer(1)], 'file.mp3', {
