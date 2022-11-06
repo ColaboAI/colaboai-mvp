@@ -1,9 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import CommentInput from './CommentInput';
 import CommentItem from './CommentItem';
-type Props = {};
+interface Props {
+  parentObjectId: number | null;
+  parentObjectType: string;
+  commentList: SongComment[] | CoverComment[];
+  onCommentSubmit: (
+    content: string,
+    parentComment: number | null,
+    setNewText: (t: string) => void,
+  ) => void;
+}
 
-function Comment({}: Props) {
+function Comment({
+  commentList,
+  parentObjectId,
+  parentObjectType,
+  onCommentSubmit,
+}: Props) {
+  const [commentText, setCommentText] = useState('');
+
   return (
     <div className="mt-8 flex flex-col container">
       <h2 className="pl-4 sm:pl-0 text-left text-sm font-bold text-gray-600 tracking-wider">
@@ -11,25 +27,29 @@ function Comment({}: Props) {
       </h2>
       <div>
         <div className="flex-col w-full">
-          <CommentItem
-            avatarUrl={'https://avatars.githubusercontent.com/u/69342392?v=4'}
-            name="GoGiants1"
-            timestamp="어제"
-            commentText="안녕하세요"
-            liked={true}
-            likeCount={99}
-          />
-          <CommentItem
-            avatarUrl={'https://avatars.githubusercontent.com/u/69342392?v=4'}
-            name="GoGiants1"
-            timestamp="어제"
-            commentText="안녕하세요"
-            liked={true}
-            likeCount={99}
-          />
+          {commentList.map((comment: SongComment | CoverComment) => (
+            <CommentItem
+              id={comment.id}
+              name={comment.user.username ?? '익명'}
+              key={comment.id}
+              commentText={comment.content}
+              timestamp={comment.updatedAt ?? comment.createdAt}
+              likeCount={99}
+              liked={false}
+              avatarUrl={comment.user.photo ?? ''}
+              onCommentSubmit={onCommentSubmit}
+              reply={comment.reply}
+            />
+          ))}
         </div>
       </div>
-      <CommentInput />
+      <CommentInput
+        parentCommentId={null}
+        parentCommentAuthorName={null}
+        text={commentText}
+        setText={setCommentText}
+        onCommentSubmit={onCommentSubmit}
+      />
     </div>
   );
 }

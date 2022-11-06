@@ -4,6 +4,8 @@ import 'react-image-crop/dist/ReactCrop.css';
 import { RouteComponentProps } from 'react-router-dom';
 import { useCropImage, useProfile } from './hook';
 
+// TODO: Profile/me 랑 일반 유저로 변경하기
+
 interface MatchParams {
   id: string;
 }
