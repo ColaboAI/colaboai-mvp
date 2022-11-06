@@ -34,6 +34,7 @@ export default function CreateCoverRecord(props: Props) {
   const [useMergedAudio, setUseMergedAudio] = useState(false);
   const [mergedUrl, setMergedUrl] = useState<string | null>(null);
   const [recordedUrl, setRecordedUrl] = useState<string | null>(null);
+  const [audioMimeType, setAudioMimeType] = useState<string>('');
   const [mergeList, setMergeList] = useState<string[]>([]);
   const [isMergeClicked, setIsMergeClicked] = useState<boolean>(false);
   const [uploadedUrl, setUploadedUrl] = useState<string>('');
@@ -106,21 +107,21 @@ export default function CreateCoverRecord(props: Props) {
       );
       const bUrl: any = await editor.readAndDecode(fileFromBlob, true);
       setRecordedUrl(bUrl);
+      setAudioMimeType('audio/mpeg');
     },
     [editor],
   );
 
-  const { status, startRecording, stopRecording, mediaBlobUrl } =
-    useReactMediaRecorder({
-      onStop: getBlobFromRecorder,
-      audio: {
-        autoGainControl: false,
-        echoCancellation: true,
-        noiseSuppression: false,
-        sampleRate: 44100,
-        sampleSize: 16,
-      },
-    });
+  const { status, startRecording, stopRecording } = useReactMediaRecorder({
+    onStop: getBlobFromRecorder,
+    audio: {
+      autoGainControl: false,
+      echoCancellation: true,
+      noiseSuppression: false,
+      sampleRate: 44100,
+      sampleSize: 16,
+    },
+  });
 
   const handleMergeList = (id: string, isMerge: boolean) => {
     if (isMerge) {
@@ -198,6 +199,7 @@ export default function CreateCoverRecord(props: Props) {
       setUploadedUrl(upload);
       editor.readAndDecode(file);
     }
+    setAudioMimeType(file.type);
   };
 
   const mergeSegments = async () => {
@@ -305,11 +307,11 @@ export default function CreateCoverRecord(props: Props) {
       ) : null}
       <div className="container flex-col justify-center items-center">
         {isRecordingEnabled ? (
-          mediaBlobUrl ? (
+          recordedUrl ? (
             <WaveformView
               // selectedSegmentId={selectedSegmentId}
-              audioUrl={mediaBlobUrl}
-              audioContentType={'audio/mpeg'}
+              audioUrl={recordedUrl}
+              audioContentType={audioMimeType}
               setSegments={setSegments}
               segments={segments}
               onPlayPause={preViewOnPlayPause}
