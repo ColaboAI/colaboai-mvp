@@ -8,6 +8,7 @@
 
 import { Helmet } from 'react-helmet-async';
 import { Switch, Route, Redirect, BrowserRouter } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 
 import Wrapper from './wrapper';
 import MainPage from './containers/MainPage';
@@ -67,6 +68,7 @@ export function App() {
             <Redirect to={url.Main()} />
           </Switch>
         </Wrapper>
+        <Toaster position="top-center" />
       </div>
     </BrowserRouter>
   );
