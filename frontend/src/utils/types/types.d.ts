@@ -135,3 +135,42 @@ type AudioData = {
   sampleRate: number;
   length: number;
 };
+
+abstract interface CommentBase {
+  id: number;
+  content: string;
+  user: UserInfo;
+  createdAt: string;
+  updatedAt: string;
+  parentComment: number | null;
+}
+
+interface CoverComment extends CommentBase {
+  coverId: number;
+  reply: CoverComment[];
+}
+
+interface SongComment extends CommentBase {
+  songId: number;
+  reply: SongComment[];
+}
+
+interface CommentFormBase {
+  id?: number;
+  content: string;
+  parentComment: number | null;
+  userId: number;
+}
+
+interface CoverCommentForm extends CommentFormBase {
+  coverId: number;
+}
+
+interface SongCommentForm extends CommentFormBase {
+  songId: number;
+}
+
+interface DeleteCommentForm {
+  commentId: number;
+  parentObjectId: number;
+}
