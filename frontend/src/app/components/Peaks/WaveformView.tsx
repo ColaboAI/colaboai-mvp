@@ -50,7 +50,7 @@ class WaveformView extends Component<Props, State> {
         ></div>
 
         <div className="flex flex-col items-center">
-          <audio className="py-2" ref={this.audioElementRef} controls hidden>
+          <audio className="py-2" ref={this.audioElementRef} controls>
             <source
               src={this.props.audioUrl}
               type={this.props.audioContentType}
