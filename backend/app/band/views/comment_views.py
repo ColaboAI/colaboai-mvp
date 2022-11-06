@@ -65,7 +65,6 @@ class CoverCommentView(
             return Response("Cover does not exist.", status=status.HTTP_400_BAD_REQUEST)
 
         data["user_id"] = request.user.id
-        data["parent_comment_id"] = request.data.get("parent_comment_id", None)
 
         serializer: CoverCommentSerializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
