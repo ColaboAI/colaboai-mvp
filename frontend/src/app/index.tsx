@@ -31,8 +31,8 @@ export function App() {
   return (
     <BrowserRouter>
       <div className="app">
-        <Helmet titleTemplate="%s - MetaBand" defaultTitle="MetaBand">
-          <meta name="description" content="MetaBand" />
+        <Helmet titleTemplate="%s - ColaboAI" defaultTitle="ColaboAI">
+          <meta name="description" content="ColaboAI" />
         </Helmet>
 
         <Wrapper>
