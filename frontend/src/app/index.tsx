@@ -22,7 +22,7 @@ import {
   CreateCoverInfo,
   CreateCoverRecord,
 } from './containers/CreateCoverPage';
-import ProfilePage from './containers/ProfilePage';
+import ProfilePage from './containers/MyProfilePage';
 
 import * as url from 'utils/urls';
 import CoverEditPage from './containers/CoverEditPage';
