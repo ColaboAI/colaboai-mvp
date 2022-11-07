@@ -12,7 +12,7 @@ interface MatchParams {
 
 export interface Props extends RouteComponentProps<MatchParams> {}
 
-export default function ProfilePage(props: Props) {
+export default function MyProfilePage(props: Props) {
   const {
     onChangeForm,
     onSaveClick,
