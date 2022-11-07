@@ -37,7 +37,7 @@ export default function CombinationArea(props: Props) {
           <div className="text-md text-center">
             <FontAwesomeIcon icon={faCircle} />
           </div>
-          <span className="ml-1 text-lg">REC</span>
+          <span className="ml-1 text-lg">녹음</span>
         </button>
       </div>
     </div>
