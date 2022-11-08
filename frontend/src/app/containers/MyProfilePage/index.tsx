@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import ReactCrop from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { RouteComponentProps } from 'react-router-dom';
-import { useCropImage, useProfile } from './hook';
+import { useCropImage, useMyProfile } from './hook';
 
 // TODO: Profile/me 랑 일반 유저로 변경하기
 
@@ -21,7 +21,7 @@ export default function MyProfilePage(props: Props) {
     instrumentResponse,
     checkList,
     setCheckList,
-  } = useProfile(props);
+  } = useMyProfile(props);
   const {
     onSelectFile,
     upImg,

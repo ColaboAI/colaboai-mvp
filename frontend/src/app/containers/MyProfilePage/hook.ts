@@ -17,7 +17,7 @@ const initForm: UserPostForm = {
   instruments: [],
 };
 
-export const useProfile = (props: Props) => {
+export const useMyProfile = (props: Props) => {
   useProfileSlice();
   const wrapperState = useSelector(selectWrapper);
   const pageState = useSelector(selectProfile);
@@ -50,7 +50,7 @@ export const useProfile = (props: Props) => {
       history.replace(urls.Main());
     } else if (!profileResponse.loading) {
       if (profileResponse.error) {
-        alert('Failed to load original data');
+        alert('Failed to load profile data');
         history.replace(urls.Main());
       } else if (profileResponse.data) {
         const user = profileResponse.data;
@@ -125,6 +125,64 @@ export const useProfile = (props: Props) => {
     checkList,
     setCheckList,
   };
+};
+
+export const useProfile = (props: Props) => {
+  useProfileSlice();
+  const wrapperState = useSelector(selectWrapper);
+  const pageState = useSelector(selectProfile);
+  const history = useHistory();
+  const dispatch = useDispatch();
+
+  const profileResponse = pageState.profileResponse;
+  const postProfileResponse = pageState.postProfileResponse;
+  const instrumentResponse = pageState.instrumentsResponse;
+
+  const [form, setForm] = useState<UserPostForm>({
+    ...initForm,
+    id: Number(props.match.params.id),
+  });
+  // handle initial state
+  useEffect(() => {
+    dispatch(apiActions.loadInstruments.request());
+    return () => {
+      dispatch(profileActions.clearRedux());
+    };
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!wrapperState.user) {
+      alert('You have to login to see profile page');
+      history.replace(urls.Main());
+    } else if (!profileResponse.loading) {
+      if (profileResponse.error) {
+        alert('Failed to load profile data');
+        history.replace(urls.Main());
+      } else if (profileResponse.data) {
+        const user = profileResponse.data;
+        if (user.id !== wrapperState.user.id) {
+          alert('You cannot edit this cover');
+          history.replace(urls.Main());
+        } else {
+          setForm({
+            id: user.id,
+            username: user.username,
+            description: user.description,
+            photo: user.photo,
+            instruments: user.instruments.map(instrument => instrument.id),
+          });
+        }
+      } else {
+        dispatch(apiActions.loadProfile.request(Number(wrapperState.user.id)));
+      }
+    }
+  }, [
+    profileResponse,
+    dispatch,
+    history,
+    props.match.params.id,
+    wrapperState.user,
+  ]);
 };
 
 export const useCropImage = () => {

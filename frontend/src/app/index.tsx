@@ -22,10 +22,11 @@ import {
   CreateCoverInfo,
   CreateCoverRecord,
 } from './containers/CreateCoverPage';
-import ProfilePage from './containers/MyProfilePage';
+import ProfilePage from './containers/MyProfilePage/ProfilePage';
+import CoverEditPage from './containers/CoverEditPage';
+import MyProfilePage from './containers/MyProfilePage';
 
 import * as url from 'utils/urls';
-import CoverEditPage from './containers/CoverEditPage';
 
 export function App() {
   return (
@@ -65,6 +66,7 @@ export function App() {
             />
             <Route exact path={url.Song(':id')} component={CoverPage} />
             <Route exact path={url.Profile(':id')} component={ProfilePage} />
+            <Route exact path={url.Profile('me')} component={MyProfilePage} />
             <Redirect to={url.Main()} />
           </Switch>
         </Wrapper>
