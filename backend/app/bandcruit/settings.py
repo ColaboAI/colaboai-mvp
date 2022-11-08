@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+from datetime import timedelta
 import os
 import json
 from json.decoder import JSONDecodeError
@@ -31,7 +32,7 @@ except (FileNotFoundError, JSONDecodeError):
     secrets = {}
 
 
-def get_secret(setting, fallback):
+def get_secret(setting, fallback="asdsad"):
     try:
         return secrets[setting]
     except KeyError:
@@ -59,9 +60,22 @@ INSTALLED_APPS = [
     "django_apscheduler",
     "corsheaders",
     "rest_framework",
+    "rest_framework.authtoken",
+    "rest_framework_simplejwt",
     "band",
     "user",
+    "dj_rest_auth",
+    "dj_rest_auth.registration",
+    "django.contrib.sites",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.twitter",
+    "allauth.socialaccount.providers.facebook",
+    "allauth.socialaccount.providers.kakao",
 ]
+
 
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"  # Default
 
@@ -69,8 +83,18 @@ SCHEDULER_DEFAULT = True
 
 # Use Custom User as default user
 AUTH_USER_MODEL = "user.CustomUser"
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = "/?verification=1"
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = "/?verification=1"
 
-
+SITE_ID = 1
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 # To use Auto Field id
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
@@ -185,10 +209,23 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticatedOrReadOnly"
     ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
+    ],
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
+}
+REST_USE_JWT = True
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=2),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": True,
 }
 
 # For https header
+JWT_AUTH_COOKIE = "colaboai-auth"
+JWT_AUTH_REFRESH_COOKIE = "colaboai-refresh-token"
 
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
