@@ -135,7 +135,6 @@ export const useProfile = (props: Props) => {
   const dispatch = useDispatch();
 
   const profileResponse = pageState.profileResponse;
-  const postProfileResponse = pageState.postProfileResponse;
   const instrumentResponse = pageState.instrumentsResponse;
 
   const [form, setForm] = useState<UserPostForm>({
@@ -178,6 +177,7 @@ export const useProfile = (props: Props) => {
     }
   }, [
     profileResponse,
+    instrumentResponse,
     dispatch,
     history,
     props.match.params.id,
