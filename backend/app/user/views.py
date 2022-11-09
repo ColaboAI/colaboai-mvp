@@ -17,34 +17,44 @@ from band.models import Instrument
 from user.serializers.info_serializers import UserSerializer
 from .serializers.profile_serializers import UserProfileSerializer
 
-from dj_rest_auth.registration.views import SocialLoginView
 from dj_rest_auth.social_serializers import TwitterLoginSerializer
 from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
 from allauth.socialaccount.providers.twitter.views import TwitterOAuthAdapter
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from allauth.socialaccount.providers.kakao.views import KakaoOAuth2Adapter
+from allauth.socialaccount.providers.naver.views import NaverOAuth2Adapter
 from allauth.socialaccount.models import SocialAccount
 from dj_rest_auth.registration.views import SocialLoginView
-from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from django.http import JsonResponse
 import requests
 from rest_framework import status
 from json.decoder import JSONDecodeError
+
+"""
+TODO:
+1. 유저 프로필 정보 업데이트 소셜 로그인 할떄 -> 시리얼라이저 수정
+2. 미디어 파일 업로드 과정 s3로 이전
+
+"""
 
 User = get_user_model()
 
 BASE_URL = "http://localhost:8000/api/"
 GOOGLE_CALLBACK_URI = BASE_URL + "accounts/google/callback/"
 KAKAO_CALLBACK_URI = BASE_URL + "accounts/kakao/callback/"
+NAVER_CALLBACK_URI = BASE_URL + "accounts/naver/callback/"
 state = get_secret("STATE")
+
+from dj_rest_auth.registration.views import SocialConnectView
+from dj_rest_auth.social_serializers import TwitterConnectSerializer
 
 
 def google_login(request):
     """
     Code Request
     """
-    scope = "https://www.googleapis.com/auth/userinfo.email"
+    scope = "openid email profile"
     client_id = get_secret("SOCIAL_AUTH_GOOGLE_CLIENT_ID")
     return redirect(
         f"https://accounts.google.com/o/oauth2/v2/auth?client_id={client_id}&response_type=code&redirect_uri={GOOGLE_CALLBACK_URI}&scope={scope}"
@@ -88,11 +98,7 @@ def google_callback(request):
         # 기존에 가입된 유저의 Provider가 google이 아니면 에러 발생, 맞으면 로그인
         # 다른 SNS로 가입된 유저
         social_user = SocialAccount.objects.get(user=user)
-        if social_user is None:
-            return JsonResponse(
-                {"err_msg": "email exists but not social user"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+
         if social_user.provider != "google":
             return JsonResponse(
                 {"err_msg": "no matching social type"},
@@ -117,6 +123,13 @@ def google_callback(request):
         accept_json = accept.json()
         accept_json.pop("user", None)
         return JsonResponse(accept_json)
+
+    except SocialAccount.DoesNotExist:
+        # 이메일은 있지만 SocialAccount가 없는 경우
+        return JsonResponse(
+            {"err_msg": "email exists but not social user"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
 
 class GoogleLogin(
@@ -158,7 +171,6 @@ def kakao_callback(request):
         headers={"Authorization": f"Bearer {access_token}"},
     )
     profile_json = profile_request.json()
-    print(profile_json)
     kakao_account = profile_json.get("kakao_account")
     """
     kakao_account에서 이메일 외에
@@ -175,11 +187,7 @@ def kakao_callback(request):
         # 기존에 가입된 유저의 Provider가 kakao가 아니면 에러 발생, 맞으면 로그인
         # 다른 SNS로 가입된 유저
         social_user = SocialAccount.objects.get(user=user)
-        if social_user is None:
-            return JsonResponse(
-                {"err_msg": "email exists but not social user"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+
         if social_user.provider != "kakao":
             return JsonResponse(
                 {"err_msg": "no matching social type"},
@@ -205,12 +213,103 @@ def kakao_callback(request):
         accept_json = accept.json()
         accept_json.pop("user", None)
         return JsonResponse(accept_json)
+    except SocialAccount.DoesNotExist:
+        # 이메일은 있지만 SocialAccount가 없는 경우
+        return JsonResponse(
+            {"err_msg": "email exists but not social user"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
 
 class KakaoLogin(SocialLoginView):
     adapter_class = KakaoOAuth2Adapter
     client_class = OAuth2Client
     callback_url = KAKAO_CALLBACK_URI
+
+
+def naver_login(request):
+    client_id = get_secret("SOCIAL_AUTH_NAVER_CLIENT_ID")
+    return redirect(
+        f"https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id={client_id}&state={state}&redirect_uri={NAVER_CALLBACK_URI}"
+    )
+
+
+def naver_callback(request):
+    client_id = get_secret("SOCIAL_AUTH_NAVER_CLIENT_ID")
+    client_secret = get_secret("SOCIAL_AUTH_NAVER_SECRET")
+    code = request.GET.get("code")
+    state_string = request.GET.get("state")
+
+    # code로 access token 요청
+    token_request = requests.get(
+        f"https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&client_id={client_id}&client_secret={client_secret}&code={code}&state={state_string}"
+    )
+    token_response_json = token_request.json()
+
+    error = token_response_json.get("error", None)
+    error_des = token_response_json.get("error_description")
+    if error is not None:
+        raise JSONDecodeError(msg=error_des, doc=error, pos=0)
+
+    access_token = token_response_json.get("access_token")
+
+    # return JsonResponse({"access_token":access_token})
+
+    # access token으로 네이버 프로필 요청
+    profile_request = requests.post(
+        "https://openapi.naver.com/v1/nid/me",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    profile_json = profile_request.json()
+    email = profile_json.get("email")
+    """
+    Signup or Signin Request
+    """
+    try:
+        user = User.objects.get(email=email)
+        # 기존에 가입된 유저의 Provider가 naver가 아니면 에러 발생, 맞으면 로그인
+        # 다른 SNS로 가입된 유저
+        social_user = SocialAccount.objects.get(user=user)
+
+        if social_user.provider != "naver":
+            return JsonResponse(
+                {"err_msg": "no matching social type"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # 기존에 네이버로 가입된 유저
+        data = {"access_token": access_token, "code": code}
+        accept = requests.post(f"{BASE_URL}accounts/naver/login/finish/", data=data)
+        accept_status = accept.status_code
+        if accept_status != 200:
+            return JsonResponse({"err_msg": "failed to signin"}, status=accept_status)
+        accept_json = accept.json()
+        accept_json.pop("user", None)
+        return JsonResponse(accept_json)
+    except User.DoesNotExist:
+        # 기존에 가입된 유저가 없으면 새로 가입
+        data = {"access_token": access_token, "code": code}
+        accept = requests.post(f"{BASE_URL}accounts/naver/login/finish/", data=data)
+        accept_status = accept.status_code
+        if accept_status != 200:
+            return JsonResponse({"err_msg": "failed to signup"}, status=accept_status)
+        # user의 pk, email, first name, last name과 Access Token, Refresh token 가져옴
+        accept_json = accept.json()
+        accept_json.pop("user", None)
+        return JsonResponse(accept_json)
+
+    except SocialAccount.DoesNotExist:
+        # User는 있는데 SocialAccount가 없을 때 (=일반회원으로 가입된 이메일일때)
+        return JsonResponse(
+            {"err_msg": "email exists but not social user"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+
+class NaverLogin(SocialLoginView):
+    adapter_class = NaverOAuth2Adapter
+    client_class = OAuth2Client
+    callback_url = NAVER_CALLBACK_URI
 
 
 class TwitterLogin(SocialLoginView):

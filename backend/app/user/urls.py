@@ -3,7 +3,6 @@ Urls for user
 """
 
 from django.urls import include, path
-from user.views import FacebookLogin, TwitterLogin, GoogleLogin
 from user import views
 
 urlpatterns = [
@@ -13,8 +12,8 @@ urlpatterns = [
     path("info/<int:pk>/", views.UserInfo.as_view(), name="user_info"),
     path("", include("dj_rest_auth.urls")),
     path("registration/", include("dj_rest_auth.registration.urls")),
-    path("facebook/", FacebookLogin.as_view(), name="fb_login"),
-    path("twitter/", TwitterLogin.as_view(), name="twitter_login"),
+    # path("facebook/", views.FacebookLogin.as_view(), name="fb_login"),
+    # path("twitter/", views.TwitterLogin.as_view(), name="twitter_login"),
     path("google/login/", views.google_login, name="google_login"),
     path("google/callback/", views.google_callback, name="google_callback"),
     path(
@@ -26,5 +25,10 @@ urlpatterns = [
     path("kakao/callback/", views.kakao_callback, name="kakao_callback"),
     path(
         "kakao/login/finish/", views.KakaoLogin.as_view(), name="kakao_login_todjango"
+    ),
+    path("naver/login/", views.naver_login, name="naver_login"),
+    path("naver/callback/", views.naver_callback, name="naver_callback"),
+    path(
+        "naver/login/finish/", views.NaverLogin.as_view(), name="naver_login_todjango"
     ),
 ]

@@ -74,8 +74,8 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.twitter",
     "allauth.socialaccount.providers.facebook",
     "allauth.socialaccount.providers.kakao",
+    "allauth.socialaccount.providers.naver",
 ]
-
 
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"  # Default
 
@@ -200,6 +200,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
 MEDIA_URL = "/media/"
 
+
 # maximum file upload size: currently 15MB
 FILE_UPLOAD_MAX_MEMORY_SIZE = 15728640
 
@@ -209,9 +210,9 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticatedOrReadOnly"
     ],
-    "DEFAULT_AUTHENTICATION_CLASSES": [
+    "DEFAULT_AUTHENTICATION_CLASSES": (
         "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
-    ],
+    ),
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
 }
 REST_USE_JWT = True
