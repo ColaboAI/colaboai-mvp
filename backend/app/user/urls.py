@@ -2,8 +2,9 @@
 Urls for user
 """
 
-from django.urls import include, path
+from django.urls import include, path, re_path
 from user import views
+from dj_rest_auth.registration.views import VerifyEmailView
 
 urlpatterns = [
     path("signup/", views.UserSignup.as_view(), name="user_signup"),
@@ -30,5 +31,16 @@ urlpatterns = [
     path("naver/callback/", views.naver_callback, name="naver_callback"),
     path(
         "naver/login/finish/", views.NaverLogin.as_view(), name="naver_login_todjango"
+    ),
+    re_path(
+        r"^account-confirm-email/$",
+        VerifyEmailView.as_view(),
+        name="account_email_verification_sent",
+    ),
+    # 유저가 클릭한 이메일(=링크) 확인
+    re_path(
+        r"^account-confirm-email/(?P<key>[-:\w]+)/$",
+        views.ConfirmEmailView.as_view(),
+        name="account_confirm_email",
     ),
 ]

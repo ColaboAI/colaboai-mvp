@@ -10,15 +10,29 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
-from datetime import timedelta
 import os
 import json
 from json.decoder import JSONDecodeError
 from pathlib import Path
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from rest_framework import permissions
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Swagger Study API",
+        default_version="v1",
+        description="Swagger Study를 위한 API 문서",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(name="test", email="test@test.com"),
+        license=openapi.License(name="Test License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -75,7 +89,8 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.facebook",
     "allauth.socialaccount.providers.kakao",
     "allauth.socialaccount.providers.naver",
-    "storages",
+    "storages",  # for S3, django-storages
+    "drf_yasg",  # swagger
 ]
 
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"  # Default
@@ -89,13 +104,35 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = "email"
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = "/?verification=1"
-ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = "/?verification=1"
 
 SITE_ID = 1
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+EMAIL_HOST = get_secret("EMAIL_HOST")  # 메일 호스트 서버
+EMAIL_PORT = get_secret("EMAIL_PORT")  # gmail과 통신하는 포트
+EMAIL_HOST_USER = get_secret("EMAIL_HOST_USER")  # email 계정
+
+EMAIL_HOST_PASSWORD = get_secret("EMAIL_HOST_PASSWORD")  # 발신할 메일의 비밀번호
+
+EMAIL_USE_TLS = True  # TLS 보안 방법
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+URL_FRONT = "loop.colabo.ml"  # 공개적인 웹페이지가 있다면 등록
+
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True  # 유저가 받은 링크를 클릭하면 회원가입 완료되게끔
+ACCOUNT_EMAIL_REQUIRED = True
+
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+# ACCOUNT_EMAIL_VERIFICATION = "none"
+
+EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = "/"  # 이메일 인증 후 리다이렉트할 페이지
+
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
+
+# 이메일에 자동으로 표시되는 사이트 정보
+ACCOUNT_EMAIL_SUBJECT_PREFIX = "colaobAI"
 # To use Auto Field id
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
@@ -243,14 +280,14 @@ REST_FRAMEWORK = {
     ),
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
 }
-# REST_USE_JWT = True
+REST_USE_JWT = True
 
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=2),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
-    "ROTATE_REFRESH_TOKENS": False,
-    "BLACKLIST_AFTER_ROTATION": True,
-}
+# SIMPLE_JWT = {
+#     "ACCESS_TOKEN_LIFETIME": timedelta(hours=2),
+#     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+#     "ROTATE_REFRESH_TOKENS": False,
+#     "BLACKLIST_AFTER_ROTATION": True,
+# }
 
 # For https header
 JWT_AUTH_COOKIE = "colaboai-auth"
