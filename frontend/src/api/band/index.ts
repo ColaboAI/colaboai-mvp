@@ -2,17 +2,17 @@ import { apiClient } from './client';
 export const api = {
   // users
   signup: async (form: SignUpForm) => {
-    return await apiClient.post<null>(`/api/user/signup/`, form);
+    return await apiClient.post<null>(`/api/accounts/signup/`, form);
   },
   signin: async (form: SignInForm) => {
-    return await apiClient.post<UserInfo>(`/api/user/signin/`, form);
+    return await apiClient.post<UserInfo>(`/api/accounts/signin/`, form);
   },
   signout: async () => {
-    const response = await apiClient.get<null>(`/api/user/signout/`);
+    const response = await apiClient.get<null>(`/api/accounts/signout/`);
     return response.data;
   },
   getUserInfo: async (userId: number) => {
-    const response = await apiClient.get<User>(`/api/user/info/${userId}/`);
+    const response = await apiClient.get<User>(`/api/accounts/info/${userId}/`);
     return response.data;
   },
 
@@ -58,9 +58,13 @@ export const api = {
   },
   postCover: async (coverForm: CoverForm) => {
     const audioBlob = await fetch(coverForm.audio).then(r => r.blob());
-    const audiofile = new File([audioBlob], 'audiofile.mp3', {
-      type: 'audio/mpeg',
-    });
+    const audiofile = new File(
+      [audioBlob],
+      `${coverForm.songId}_${coverForm.category}_${coverForm.title}.mp3`,
+      {
+        type: 'audio/mpeg',
+      },
+    );
     const coverFormData = new FormData();
     coverFormData.append('audio', audiofile);
     coverFormData.append('title', coverForm.title);

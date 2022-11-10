@@ -43,9 +43,9 @@ SECRET_KEY = get_secret("SECRET_KEY", "ASDFG")
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = get_secret("DEBUG", True)
+DEBUG = get_secret("DEBUG", True) == "True"
 
-ALLOWED_HOSTS = get_secret("ALLOWED_HOSTS", ["localhost"])
+ALLOWED_HOSTS = get_secret("ALLOWED_HOSTS", ["localhost", "127.0.0.1"])
 
 
 # Application definition
@@ -75,6 +75,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.facebook",
     "allauth.socialaccount.providers.kakao",
     "allauth.socialaccount.providers.naver",
+    "storages",
 ]
 
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"  # Default
@@ -113,14 +114,14 @@ MIDDLEWARE = [
 ROOT_URLCONF = "bandcruit.urls"
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://www.metaband.space/*",
-    "metaband.space/*",
+    "https://www.colabo.ml/*",
+    "colabo.ml/*",
     "http://localhost",
-    "metaband.space",
+    "colabo.ml",
 ]
 CORS_ORIGIN_WHITELIST = [
-    "https://www.metaband.space",
-    "https://metaband.space",
+    "https://www.colabo.ml",
+    "https://colabo.ml",
     "http://localhost",
 ]
 
@@ -193,12 +194,39 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-# STATIC_URL = "/static/"
-STATIC_URL = "/static/"
+USE_S3 = get_secret("USE_S3", "False") == "True"
+if USE_S3:
+    # aws settings
+    AWS_ACCESS_KEY_ID = get_secret("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = get_secret("AWS_SECRET_ACCESS_KEY")
+    AWS_STORAGE_BUCKET_NAME = get_secret("AWS_STORAGE_BUCKET_NAME")
+    AWS_DEFAULT_ACL = "public-read"
+    AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+    AWS_S3_OBJECT_PARAMETERS = {
+        "ACL": "public-read",
+        "CacheControl": "max-age=86400",
+    }
+    STATIC_LOCATION = "static"
+    # STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/"
+    # STATICFILES_STORAGE = "hello_django.storage_backends.StaticStorage"
+    # s3 public media settings
+    PUBLIC_MEDIA_LOCATION = "media"
+    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
+    DEFAULT_FILE_STORAGE = "band.storage_backends.PublicMediaStorage"
 
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-MEDIA_URL = "/media/"
-MEDIA_URL = "/media/"
+    # 개발용 임시 static local
+    STATIC_URL = "/static/"
+    STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+else:
+    STATIC_URL = "/static/"
+    STATIC_ROOT = os.path.join(BASE_DIR, "static")
+    MEDIA_URL = "/media/"
+    MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+DEFAULT_FILE_STORAGE = "band.storage_backends.PublicMediaStorage"
+# STATICFILES_STORAGE = "band.storage_backends.StaticStorage"
+# STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
 
 # maximum file upload size: currently 15MB
@@ -215,7 +243,7 @@ REST_FRAMEWORK = {
     ),
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
 }
-REST_USE_JWT = True
+# REST_USE_JWT = True
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=2),

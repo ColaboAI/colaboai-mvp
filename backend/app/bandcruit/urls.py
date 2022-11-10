@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import include, path
 from django.conf.urls.static import static
 from rest_framework import routers
+from .settings import get_secret
 from bandcruit import settings
 
 # Routers provide an easy way of automatically determining the URL conf.
@@ -28,5 +29,5 @@ urlpatterns = [
     path("api/accounts/", include("user.urls")),
     path("api/", include("band.urls")),
 ]
-
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if get_secret("USE_S3") != "True":
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
