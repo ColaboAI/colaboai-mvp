@@ -12,7 +12,7 @@ from .managers import UserManager
 # Image size optimization
 def user_profile_path(instance, filename):
     extension = os.path.splitext(filename)[1]
-    return f"profile_pic/{instance.pk}_profile{extension}"
+    return f"profile_pic/{instance.pk}/profile{extension}"
 
 
 class CustomUser(AbstractUser):

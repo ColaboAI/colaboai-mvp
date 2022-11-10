@@ -1,6 +1,7 @@
 """ band models
 Django models for band
 """
+import os
 from django.db import models
 from django.db.models.deletion import CASCADE
 from django.db.models.fields import CharField, IntegerField
@@ -66,6 +67,11 @@ class Song(models.Model):
         db_table = "Song"
 
 
+def cover_audio_path(instance, filename):
+    print(f"{instance.title}/{instance.instrument_id}/{filename}")
+    return f"cover_audio/{instance.song_id}/{instance.instrument_id}/{filename}"
+
+
 class Cover(models.Model):
     """Model for Cover
     :field audio: The audio file of this cover
@@ -81,7 +87,7 @@ class Cover(models.Model):
     :field combination: The 'Combination' this cover was made to / null if there was no combination
     """
 
-    audio = models.FileField(upload_to="cover_audio", editable=False)
+    audio = models.FileField(upload_to=cover_audio_path, editable=False)
     title: str = models.CharField(max_length=50, db_column="title")
     category: str = models.CharField(
         max_length=30,

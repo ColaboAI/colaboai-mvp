@@ -10,8 +10,10 @@ from common.proxy_file_field import ProxyFileField
 
 User = get_user_model()
 
+
 class UserProfileSerializer(serializers.ModelSerializer):
     """Serializer for user"""
+
     instruments = InstrumentSerializer(many=True, read_only=True)
     followings = UserSerializer(many=True, read_only=True)
     followers = UserSerializer(many=True, read_only=True)

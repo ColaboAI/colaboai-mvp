@@ -26,7 +26,7 @@ from allauth.socialaccount.providers.kakao.views import KakaoOAuth2Adapter
 from allauth.socialaccount.providers.naver.views import NaverOAuth2Adapter
 from allauth.socialaccount.models import SocialAccount
 from dj_rest_auth.registration.views import SocialLoginView
-from django.http import JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
 import requests
 from rest_framework import status
 from json.decoder import JSONDecodeError
@@ -48,6 +48,38 @@ state = get_secret("STATE")
 
 from dj_rest_auth.registration.views import SocialConnectView
 from dj_rest_auth.social_serializers import TwitterConnectSerializer
+from allauth.account.models import EmailConfirmation, EmailConfirmationHMAC
+
+
+class ConfirmEmailView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, *args, **kwargs):
+        self.object = confirmation = self.get_object()
+        confirmation.confirm(self.request)
+        # A React Router Route will handle the failure scenario
+        return HttpResponseRedirect("/")
+
+    def get_object(self, queryset=None):
+        key = self.kwargs["key"]
+        email_confirmation = EmailConfirmationHMAC.from_key(key)
+        if not email_confirmation:
+            if queryset is None:
+                queryset = self.get_queryset()
+            try:
+                email_confirmation = queryset.get(key=key.lower())
+            except EmailConfirmation.DoesNotExist:
+                # A React Router Route will handle the failure scenario
+                return JsonResponse(
+                    {"err_msg": "failed to confirm email address"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        return email_confirmation
+
+    def get_queryset(self):
+        qs = EmailConfirmation.objects.all_valid()
+        qs = qs.select_related("email_address__user")
+        return qs
 
 
 def google_login(request):

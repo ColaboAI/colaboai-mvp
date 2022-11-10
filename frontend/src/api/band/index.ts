@@ -60,7 +60,7 @@ export const api = {
     const audioBlob = await fetch(coverForm.audio).then(r => r.blob());
     const audiofile = new File(
       [audioBlob],
-      `${coverForm.songId}_${coverForm.category}_${coverForm.title}.mp3`,
+      `${coverForm.title}_${Date.now()}.mp3`,
       {
         type: 'audio/mpeg',
       },
