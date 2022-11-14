@@ -65,7 +65,7 @@ export function App() {
               component={CreateCoverInfo}
             />
             <Route exact path={url.Song(':id')} component={CoverPage} />
-            <Route exact path={url.Profile(':id')} component={ProfilePage} />
+            <Route exact path={url.Profile(':id')} component={MyProfilePage} />
             <Route exact path={url.Profile('me')} component={MyProfilePage} />
             <Redirect to={url.Main()} />
           </Switch>
