@@ -2,13 +2,13 @@ import { apiClient } from './client';
 export const api = {
   // users
   signup: async (form: SignUpForm) => {
-    return await apiClient.post<null>(`/api/accounts/signup/`, form);
+    return await apiClient.post<null>(`/api/accounts/registration/`, form);
   },
   signin: async (form: SignInForm) => {
-    return await apiClient.post<UserInfo>(`/api/accounts/signin/`, form);
+    return await apiClient.post<UserInfo>(`/api/accounts/login/`, form);
   },
   signout: async () => {
-    const response = await apiClient.get<null>(`/api/accounts/signout/`);
+    const response = await apiClient.get<null>(`/api/accounts/logout/`);
     return response.data;
   },
   getUserInfo: async (userId: number) => {
