@@ -100,12 +100,11 @@ SCHEDULER_DEFAULT = True
 
 # Use Custom User as default user
 AUTH_USER_MODEL = "user.CustomUser"
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = "email"
-
+ACCOUNT_USERNAME_BLACKLIST = ["admin", "master", "colaboai"]
 SITE_ID = 1
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
@@ -304,3 +303,5 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 REST_AUTH_SERIALIZERS = {
     "USER_DETAILS_SERIALIZER": "user.serializers.UserProfileSerializer"
 }
+
+# TODO: 회원가입시 refresh 토큰 반환되는것 수정하기.
