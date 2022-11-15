@@ -49,10 +49,10 @@ export default function SignInPage(props: Props) {
       <div className="flex bg-gray-bg1">
         <div className="w-full max-w-md m-auto bg-white rounded-lg border border-primaryBorder shadow-default py-10 px-16">
           <h1 className="text-2xl font-medium text-primary mt-4 mb-12 text-center">
-            Sign In 🔐
+            로그인 🔐
           </h1>
           <div>
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">이메일</label>
             <input
               data-testid="input-email"
               type="email"
@@ -64,7 +64,7 @@ export default function SignInPage(props: Props) {
             />
           </div>
           <div>
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">비밀번호</label>
             <input
               data-testid="input-password"
               type="password"
@@ -83,7 +83,7 @@ export default function SignInPage(props: Props) {
                 font-semibold font-display focus:outline-none focus:shadow-outline hover:bg-indigo-600 shadow-lg"
               onClick={onSigninClicked}
             >
-              Sign In
+              로그인
             </button>
           </div>
         </div>
