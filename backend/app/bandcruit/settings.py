@@ -295,3 +295,7 @@ JWT_AUTH_REFRESH_COOKIE = "colaboai-refresh-token"
 
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+REST_AUTH_SERIALIZERS = {
+    "USER_DETAILS_SERIALIZER": "user.serializers.UserProfileSerializer"
+}

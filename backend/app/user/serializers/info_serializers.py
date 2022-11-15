@@ -15,9 +15,17 @@ class UserSerializer(serializers.ModelSerializer):
     photo = ProxyFileField(allow_empty_file=True)
 
     class Meta:
+        extra_fields = []
         model = User
-        fields = [
-            "id",
-            "username",
-            "photo",
-        ]
+        # if hasattr(User, "email"):
+        #     extra_fields.append("email")
+        if hasattr(User, "username"):
+            extra_fields.append("username")
+        if hasattr(User, "photo"):
+            extra_fields.append("photo")
+        # if hasattr(User, "last_name"):
+        #     extra_fields.append("last_name")
+        # if hasattr(User, "first_name"):
+        #     extra_fields.append("first_name")
+        fields = ("id", *extra_fields)
+        read_only_fields = ("email",)

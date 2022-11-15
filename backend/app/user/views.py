@@ -3,39 +3,41 @@ views for user
 """
 import json
 from json.decoder import JSONDecodeError
-from django.http.request import HttpRequest
-from django.contrib.auth import authenticate, login, logout, get_user_model
-from django.shortcuts import redirect
-from rest_framework import mixins, generics, status
-from rest_framework.request import Request
-from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
-from rest_framework.views import APIView
-from bandcruit.settings import get_secret
 
-from band.models import Instrument
-from user.serializers.info_serializers import UserSerializer
-from .serializers.profile_serializers import UserProfileSerializer
-
-from dj_rest_auth.social_serializers import TwitterLoginSerializer
+import requests
+from allauth.account.models import EmailConfirmation, EmailConfirmationHMAC
+from allauth.socialaccount.models import SocialAccount
 from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
-from allauth.socialaccount.providers.twitter.views import TwitterOAuthAdapter
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
-from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from allauth.socialaccount.providers.kakao.views import KakaoOAuth2Adapter
 from allauth.socialaccount.providers.naver.views import NaverOAuth2Adapter
-from allauth.socialaccount.models import SocialAccount
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from allauth.socialaccount.providers.twitter.views import TwitterOAuthAdapter
+from band.models import Instrument
+from bandcruit.settings import get_secret
 from dj_rest_auth.registration.views import SocialLoginView
+from dj_rest_auth.social_serializers import TwitterLoginSerializer
+from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.http import HttpResponseRedirect, JsonResponse
-import requests
-from rest_framework import status
-from json.decoder import JSONDecodeError
+from django.http.request import HttpRequest
+from django.shortcuts import redirect
+from django.db import IntegrityError
+from rest_framework import generics, mixins, status
+from rest_framework.permissions import (
+    AllowAny,
+    IsAuthenticatedOrReadOnly,
+    IsAuthenticated,
+)
+from rest_framework.request import Request
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from .models import UserFollowing
+from .serializers import UserFollowingSerializer, UserProfileSerializer, UserSerializer
 
 """
 TODO:
 1. 유저 프로필 정보 업데이트 소셜 로그인 할떄 -> 시리얼라이저 수정
-2. 미디어 파일 업로드 과정 s3로 이전
-
 """
 
 User = get_user_model()
@@ -46,9 +48,70 @@ KAKAO_CALLBACK_URI = BASE_URL + "accounts/kakao/callback/"
 NAVER_CALLBACK_URI = BASE_URL + "accounts/naver/callback/"
 state = get_secret("STATE")
 
-from dj_rest_auth.registration.views import SocialConnectView
-from dj_rest_auth.social_serializers import TwitterConnectSerializer
-from allauth.account.models import EmailConfirmation, EmailConfirmationHMAC
+
+class UserFollowingView(mixins.ListModelMixin, generics.GenericAPIView):
+
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    serializer_class = UserFollowingSerializer
+    queryset = UserFollowing.objects.all()
+
+    def get(self, request: Request, *args, **kwargs) -> Response:
+        try:
+            pk = kwargs["pk"]
+            self.queryset = UserFollowing.objects.filter(user_to__id=pk)
+            return self.list(request)
+        except User.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+    def post(self, request: Request, *args, **kwargs) -> Response:
+        try:
+            pk = kwargs["pk"]
+            user = User.objects.get(pk=pk)
+            if pk == request.user.pk:
+                return JsonResponse(
+                    {"err_msg": "Can not follow yourself."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            data = {"user_from": request.user.pk, "user_to": pk}
+            serializer = UserFollowingSerializer(data=data)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save(user_from=request.user, user_to=user)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except User.DoesNotExist:
+            return JsonResponse(
+                {"err_msg": "Fail to follow. User Does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except IntegrityError:
+            return JsonResponse(
+                {"err_msg": "Already following."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def delete(self, request: HttpRequest, *args, **kwargs):
+        try:
+            pk = kwargs["pk"]
+            user_to = User.objects.get(pk=pk)
+            user_from = request.user
+
+            data = {"user_from": user_from.pk, "user_to": user_to.pk}
+            q = UserFollowing.objects.filter(**data)
+            if q.exists():
+                q.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            else:
+                return JsonResponse(
+                    {"err_msg": "Fail to unfollow. You are not following this user."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        except User.DoesNotExist:
+            return JsonResponse(
+                {"err_msg": "Fail to unfollow. User Does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
 
 class ConfirmEmailView(APIView):

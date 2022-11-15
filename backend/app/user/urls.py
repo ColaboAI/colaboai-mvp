@@ -43,4 +43,9 @@ urlpatterns = [
         views.ConfirmEmailView.as_view(),
         name="account_confirm_email",
     ),
+    path(
+        "follow/<int:pk>/",
+        views.UserFollowingView.as_view(),
+        name="follow",
+    ),
 ]
