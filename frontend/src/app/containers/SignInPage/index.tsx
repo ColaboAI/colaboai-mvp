@@ -19,9 +19,9 @@ export default function SignInPage(props: Props) {
 
   const onSigninClicked = () => {
     if (!email) {
-      toast.error('Please enter email');
+      toast.error('이메일을 입력해주세요.');
     } else if (!password) {
-      toast.error('Please enter password');
+      toast.error('비밀번호를 입력해주세요.');
     } else if (signInState.signInResponse.loading) {
       toast.error('Still loading');
     } else {
