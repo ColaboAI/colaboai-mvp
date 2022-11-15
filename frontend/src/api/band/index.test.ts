@@ -27,13 +27,23 @@ describe('band api', () => {
   });
 
   test('users', async () => {
-    const mockSignForm = { email: 'MOCK_EMAIL', password: 'MOCK_PASSWORD' };
+    const mockSignForm: SignUpForm = {
+      username: 'MOCK_USERNAME',
+      email: 'MOCK_EMAIL',
+      password1: 'MOCK_PASSWORD',
+      password2: 'MOCK_PASSWORD',
+    };
+    const mockSigninForm: SignInForm = {
+      username: 'MOCK_USERNAME',
+      email: 'MOCK_EMAIL',
+      password: 'MOCK_PASSWORD',
+    };
     const mockId = 323;
 
     expect(await api.signup(mockSignForm)).toEqual(MOCK_POST_RESPONSE);
     expect(apiClient.post).lastCalledWith(`/api/user/signup/`, mockSignForm);
 
-    expect(await api.signin(mockSignForm)).toEqual(MOCK_POST_RESPONSE);
+    expect(await api.signin(mockSigninForm)).toEqual(MOCK_POST_RESPONSE);
     expect(apiClient.post).lastCalledWith(`/api/user/signin/`, mockSignForm);
 
     expect(await api.signout()).toEqual(MOCK_GET_DATA);
