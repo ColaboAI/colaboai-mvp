@@ -416,57 +416,6 @@ class FacebookLogin(SocialLoginView):
     adapter_class = FacebookOAuth2Adapter
 
 
-class UserSignup(APIView):
-    """user/signup/"""
-
-    permission_classes = [AllowAny]
-
-    def post(self, request: Request):
-        try:
-            data = request.data
-            email = data["email"]
-            password = data["password"]
-        except (KeyError, JSONDecodeError):
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-        User.objects.create_user(email, password)
-        return Response(status=status.HTTP_201_CREATED)
-
-
-class UserSignin(APIView):
-    """user/signin/"""
-
-    permission_classes = [AllowAny]
-
-    def post(self, request: Request):
-        try:
-            data = request.data
-            email = data["email"]
-            password = data["password"]
-        except (KeyError, JSONDecodeError):
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-        user = authenticate(request, email=email, password=password)
-        if user is None:
-            return Response(
-                "Wrong email or password.", status=status.HTTP_401_UNAUTHORIZED
-            )
-
-        login(request, user)
-        return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
-
-
-class UserSignout(APIView):
-    """user/signout/"""
-
-    def get(self, request: HttpRequest):
-        if not request.user.is_authenticated:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
-
-        logout(request)
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
 class UserInfo(
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,

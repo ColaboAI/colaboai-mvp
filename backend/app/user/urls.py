@@ -7,9 +7,6 @@ from user import views
 from dj_rest_auth.registration.views import VerifyEmailView
 
 urlpatterns = [
-    path("signup/", views.UserSignup.as_view(), name="user_signup"),
-    path("signin/", views.UserSignin.as_view(), name="user_signin"),
-    path("signout/", views.UserSignout.as_view(), name="user_signout"),
     path("info/<int:pk>/", views.UserInfo.as_view(), name="user_info"),
     path("", include("dj_rest_auth.urls")),
     path("registration/", include("dj_rest_auth.registration.urls")),
