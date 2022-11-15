@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+from datetime import timedelta
 import os
 import json
 from json.decoder import JSONDecodeError
@@ -123,9 +124,8 @@ URL_FRONT = "loop.colabo.ml"  # 공개적인 웹페이지가 있다면 등록
 
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True  # 유저가 받은 링크를 클릭하면 회원가입 완료되게끔
 ACCOUNT_EMAIL_REQUIRED = True
-
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-# ACCOUNT_EMAIL_VERIFICATION = "none"
+# TODO: 이메일 인증을 통해 회원가입을 완료하게끔?
+ACCOUNT_EMAIL_VERIFICATION = "none"  # "mandatory"
 
 EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = "/"  # 이메일 인증 후 리다이렉트할 페이지
 
@@ -282,17 +282,22 @@ REST_FRAMEWORK = {
 }
 REST_USE_JWT = True
 
-# SIMPLE_JWT = {
-#     "ACCESS_TOKEN_LIFETIME": timedelta(hours=2),
-#     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
-#     "ROTATE_REFRESH_TOKENS": False,
-#     "BLACKLIST_AFTER_ROTATION": True,
-# }
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": False,
+    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
+}
+# TODO: uncomment this in production
+# JWT_AUTH_SECURE = True
+# REST_SESSION_LOGIN = False
 
-# For https header
-JWT_AUTH_COOKIE = "colaboai-auth"
+JWT_AUTH_HTTPONLY = True
+# JWT_AUTH_COOKIE = "colaboai-auth"
 JWT_AUTH_REFRESH_COOKIE = "colaboai-refresh-token"
 
+# For https header
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
