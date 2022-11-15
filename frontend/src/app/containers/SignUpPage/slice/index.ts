@@ -6,7 +6,7 @@ import signUpPageSaga from './saga';
 /* --- STATE --- */
 export interface SignUpState {
   name: string;
-  signUpResponse: AsyncStateType<null>;
+  signUpResponse: AsyncStateType<UserInfo>;
 } // state 형식 정의
 
 export const initialState: SignUpState = {
@@ -22,7 +22,7 @@ const slice = createSlice({
       state.signUpResponse = { loading: true };
       return state;
     },
-    successSignUpResponse(state, action: PayloadAction<null>) {
+    successSignUpResponse(state, action: PayloadAction<UserInfo>) {
       //signup 은 post null
       state.signUpResponse = { loading: false };
       state.signUpResponse.data = action.payload;

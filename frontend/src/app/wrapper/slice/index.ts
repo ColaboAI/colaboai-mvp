@@ -9,6 +9,7 @@ import wrapperSaga from './saga';
 export interface WrapperState {
   user?: UserInfo;
   currentTrack?: TrackInfo;
+  accessToken?: string;
 } // state 형식 정의
 
 export const initialState: WrapperState = {
@@ -20,8 +21,9 @@ const slice = createSlice({
   name: 'wrapper', // 이 이름을 types/RootState.ts에 써놓아야 함
   initialState,
   reducers: {
-    setUser(state, action: PayloadAction<UserInfo>) {
-      state.user = action.payload;
+    setUser(state, action: PayloadAction<UserLoginResponse>) {
+      state.user = action.payload.user;
+      state.accessToken = action.payload.accessToken;
       return state;
     },
     setCurrentPlaying(state, action: PayloadAction<TrackInfo>) {
@@ -31,6 +33,7 @@ const slice = createSlice({
     signOut(state, action: PayloadAction<undefined>) {
       api.signout();
       state.user = undefined;
+      state.accessToken = undefined;
     },
   },
 });

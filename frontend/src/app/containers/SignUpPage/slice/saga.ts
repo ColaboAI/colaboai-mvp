@@ -17,8 +17,8 @@ export function* getSignUpResponse(
   yield put(signUpActions.loadingSignUpResponse('start load'));
   try {
     const signUpResponse = yield api.signup(action.payload);
-    yield put(signUpActions.successSignUpResponse(signUpResponse));
-    yield put(wrapperActions.setUser(signUpResponse));
+    yield put(signUpActions.successSignUpResponse(signUpResponse.data));
+    yield put(wrapperActions.setUser(signUpResponse.data));
   } catch (e: any) {
     yield put(signUpActions.errorSignUpResponse(e));
   }

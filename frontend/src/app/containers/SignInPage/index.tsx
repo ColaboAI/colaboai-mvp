@@ -5,6 +5,7 @@ import { Main } from 'utils/urls';
 import { signInActions, useSignInSlice } from './slice';
 import * as apiActions from 'api/actions';
 import { selectSignIn } from './slice/selectors';
+import toast from 'react-hot-toast';
 export type Props = {};
 
 export default function SignInPage(props: Props) {
@@ -18,13 +19,13 @@ export default function SignInPage(props: Props) {
 
   const onSigninClicked = () => {
     if (!email) {
-      alert('Please enter email');
+      toast.error('Please enter email');
     } else if (!password) {
-      alert('Please enter password');
+      toast.error('Please enter password');
     } else if (signInState.signInResponse.loading) {
-      alert('Still loading');
+      toast.error('Still loading');
     } else {
-      dispatch(apiActions.signin.request({ email, password }));
+      dispatch(apiActions.signin.request({ username: '', email, password }));
     }
   };
 
@@ -32,10 +33,10 @@ export default function SignInPage(props: Props) {
     if (!signInState.signInResponse.loading) {
       if (signInState.signInResponse.data) {
         dispatch(signInActions.clearSignInResponse());
-        history.push(Main()); // TODO : testing
+        history.push(Main()); // TODO: testing
       }
       if (signInState.signInResponse.error) {
-        alert('No User Info Received!');
+        toast.error(signInState.signInResponse.error.message);
         dispatch(signInActions.clearSignInResponse());
       }
     }
@@ -82,6 +83,12 @@ export default function SignInPage(props: Props) {
             >
               로그인
             </button>
+          </div>
+          <div className="w-full p-4  text-center">
+            콜라보에이아이가 처음이신가요?{' '}
+            <a className=" text-blue-700" href="/signup">
+              회원가입
+            </a>
           </div>
         </div>
       </div>

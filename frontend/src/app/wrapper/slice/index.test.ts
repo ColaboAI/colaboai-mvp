@@ -43,6 +43,14 @@ test('setUser', () => {
   const dummyUserInfo: UserInfo = {
     id: 1,
     username: 'dummy',
+    photo: 'https://dummyimage.com/300x300/000/fff',
+    follower: 0,
+    following: 0,
+  };
+  const dummyUserResponse: UserLoginResponse = {
+    user: dummyUserInfo,
+    accessToken: 'dummyAccessToken',
+    refreshToken: 'dummyRefreshToken',
   };
 
   const stateInit: WrapperState = {};
@@ -51,7 +59,10 @@ test('setUser', () => {
   };
 
   expect(
-    useWrapperSlice().reducer(stateInit, wrapperActions.setUser(dummyUserInfo)),
+    useWrapperSlice().reducer(
+      stateInit,
+      wrapperActions.setUser(dummyUserResponse),
+    ),
   ).toEqual(stateChanged);
 });
 
