@@ -5,11 +5,25 @@ import * as actions from 'api/actions';
 import { api } from 'api/band';
 import { ActionType } from 'typesafe-actions';
 
+// TODO: 일반 유저의 프로필을 불러오는 액션
 // Root saga
 export default function* profilePageSaga(payload: any) {
   yield takeEvery(AT.LOAD_PROFILE.REQUEST, getProfileResponse);
   yield takeEvery(AT.POST_PROFILE.REQUEST, postProfileResponse);
   yield takeEvery(AT.LOAD_INSTRUMENTS.REQUEST, getInstrumentsRequest);
+  yield takeEvery(AT.LOAD_MY_PROFILE.REQUEST, getMyProfileResponse);
+}
+
+export function* getMyProfileResponse(
+  action: ActionType<typeof actions.loadMyProfile.request>,
+) {
+  yield put(profileActions.loadingProfileResponse('start load'));
+  try {
+    const profileResponse = yield api.getMyInfo();
+    yield put(profileActions.successProfileResponse(profileResponse));
+  } catch (e: any) {
+    yield put(profileActions.errorProfileResponse(e));
+  }
 }
 
 export function* getProfileResponse(

@@ -1,8 +1,11 @@
 import { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import CommentInput from './CommentInput';
 import ReplyCommentItem from './ReplyCommentItem';
+import * as urls from 'utils/urls';
 type Props = {
   id: number;
+  userId: number;
   avatarUrl: string;
   name: string;
   timestamp: string;
@@ -21,6 +24,7 @@ function CommentItem({
   id,
   avatarUrl,
   name,
+  userId,
   timestamp,
   commentText,
   liked,
@@ -31,17 +35,22 @@ function CommentItem({
   const [isReply, setIsReply] = useState(false);
   const [showReply, setShowReply] = useState(false);
   const [replyText, setReplyText] = useState('');
+  const history = useHistory();
   return (
     <div className="container flex-col w-full">
       <div className="container flex mt-2 hover:bg-blue-50">
         <img
-          className="mx-2 self-center inline-block h-12 w-12 rounded-full ring-2 ring-white"
+          className="hover:cursor-pointer mx-2 self-center inline-block h-12 w-12 rounded-full ring-2 ring-white"
           src={avatarUrl}
           alt="avatar"
+          onClick={() => history.push(urls.Profile(userId))}
         />
         <div className="space-y-1">
           <div className="flex space-x-2 text-center items-center">
-            <h3 className="text-left text-sm font-bold text-gray-700">
+            <h3
+              className="hover:cursor-pointer text-left text-sm font-bold text-gray-700"
+              onClick={() => history.push(urls.Profile(userId))}
+            >
               {name}
             </h3>
             <p className="text-left text-xs font-light text-gray-400 overflow-hidden">
@@ -77,6 +86,7 @@ function CommentItem({
             id={r.id}
             avatarUrl={r.user.photo ?? ''}
             name={r.user.username}
+            userId={r.user.id}
             timestamp={r.updatedAt ?? r.createdAt}
             liked={false}
             likeCount={99}

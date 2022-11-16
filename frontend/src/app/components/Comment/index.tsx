@@ -31,6 +31,7 @@ function Comment({
             <CommentItem
               id={comment.id}
               name={comment.user.username ?? '익명'}
+              userId={comment.user.id}
               key={comment.id}
               commentText={comment.content}
               timestamp={comment.updatedAt ?? comment.createdAt}

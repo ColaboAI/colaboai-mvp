@@ -117,7 +117,7 @@ test('should signin Response onError', async () => {
   const dispatched: any[] = [];
 
   api.signup = jest.fn(
-    (form: SignInForm) =>
+    (form: SignUpForm) =>
       new Promise((res, rej) => {
         rej('REJECT');
       }),

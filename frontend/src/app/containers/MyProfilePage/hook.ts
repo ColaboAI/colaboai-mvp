@@ -16,8 +16,17 @@ const initForm: UserPostForm = {
   photo: '',
   instruments: [],
 };
+const initUser: User = {
+  id: -1,
+  username: 'Your ID',
+  description: 'Your Description',
+  photo: '',
+  instruments: [],
+  follower: 0,
+  following: 0,
+};
 
-export const useMyProfile = (props: Props) => {
+export const useMyProfile = () => {
   useProfileSlice();
   const wrapperState = useSelector(selectWrapper);
   const pageState = useSelector(selectProfile);
@@ -30,7 +39,6 @@ export const useMyProfile = (props: Props) => {
 
   const [form, setForm] = useState<UserPostForm>({
     ...initForm,
-    id: Number(props.match.params.id),
   });
   const [checkList, setCheckList] = useState<number[]>(form.instruments || []);
 
@@ -69,15 +77,19 @@ export const useMyProfile = (props: Props) => {
           setCheckList(user.instruments.map(instrument => instrument.id));
         }
       } else {
-        dispatch(apiActions.loadProfile.request(Number(props.match.params.id)));
+        if (wrapperState.accessToken) {
+          dispatch(apiActions.loadMyProfile.request());
+        } else {
+          dispatch(apiActions.refreshToken.request());
+        }
       }
     }
   }, [
     profileResponse,
     dispatch,
     history,
-    props.match.params.id,
     wrapperState.user,
+    wrapperState.accessToken,
   ]);
 
   // handle post response
@@ -135,54 +147,54 @@ export const useProfile = (props: Props) => {
   const dispatch = useDispatch();
 
   const profileResponse = pageState.profileResponse;
-  const postProfileResponse = pageState.postProfileResponse;
   const instrumentResponse = pageState.instrumentsResponse;
 
-  const [form, setForm] = useState<UserPostForm>({
-    ...initForm,
+  const [form, setForm] = useState<User>({
+    ...initUser,
     id: Number(props.match.params.id),
   });
   // handle initial state
   useEffect(() => {
     dispatch(apiActions.loadInstruments.request());
+    dispatch(apiActions.loadProfile.request(Number(props.match.params.id)));
     return () => {
       dispatch(profileActions.clearRedux());
     };
-  }, [dispatch]);
+  }, [dispatch, props.match.params.id]);
 
   useEffect(() => {
-    if (!wrapperState.user) {
-      alert('You have to login to see profile page');
-      history.replace(urls.Main());
-    } else if (!profileResponse.loading) {
+    if (!profileResponse.loading) {
       if (profileResponse.error) {
         alert('Failed to load profile data');
         history.replace(urls.Main());
       } else if (profileResponse.data) {
         const user = profileResponse.data;
-        if (user.id !== wrapperState.user.id) {
-          alert('You cannot edit this cover');
-          history.replace(urls.Main());
-        } else {
-          setForm({
-            id: user.id,
-            username: user.username,
-            description: user.description,
-            photo: user.photo,
-            instruments: user.instruments.map(instrument => instrument.id),
-          });
+        setForm({
+          id: user.id,
+          username: user.username,
+          description: user.description,
+          photo: user.photo,
+          instruments: user.instruments,
+          follower: user.follower,
+          following: user.following,
+        });
+        // setPhoto(user.photo);
+
+        if (wrapperState.user && user.id === wrapperState.user.id) {
+          history.replace(urls.Profile('me'));
         }
-      } else {
-        dispatch(apiActions.loadProfile.request(Number(wrapperState.user.id)));
       }
     }
   }, [
     profileResponse,
+    instrumentResponse,
     dispatch,
     history,
     props.match.params.id,
     wrapperState.user,
   ]);
+
+  return { form };
 };
 
 export const useCropImage = () => {

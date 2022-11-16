@@ -1,9 +1,14 @@
 interface SignUpForm {
+  username: string;
+  email: string;
+  password1: string;
+  password2: string;
+}
+interface SignInForm {
+  username: string;
   email: string;
   password: string;
 }
-
-type SignInForm = SignUpForm;
 
 interface Combination {
   id: number;
@@ -80,16 +85,17 @@ interface SongForm {
 interface User {
   id: number;
   username: string;
-  email: string;
+  // email: string;
   description: string;
   photo: string;
-  followings: UserInfo[];
+  following: number;
+  follower: number;
   instruments: Instrument[];
 }
 
 interface UserPostForm {
   id: number;
-  username?: string;
+  username: string;
   description?: string;
   photo?: string;
   instruments?: number[];
@@ -99,6 +105,14 @@ type UserInfo = {
   id: number;
   username: string;
   photo?: string;
+  following: number;
+  follower: number;
+};
+
+type UserLoginResponse = {
+  user: UserInfo;
+  accessToken: string;
+  refreshToken: string;
 };
 
 type SongInfo = {

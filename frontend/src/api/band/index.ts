@@ -2,28 +2,41 @@ import { apiClient } from './client';
 export const api = {
   // users
   signup: async (form: SignUpForm) => {
-    return await apiClient.post<null>(`/api/user/signup/`, form);
+    return await apiClient.post<null>(`/api/accounts/registration/`, form);
   },
   signin: async (form: SignInForm) => {
-    return await apiClient.post<UserInfo>(`/api/user/signin/`, form);
+    return await apiClient.post<UserLoginResponse>(
+      `/api/accounts/login/`,
+      form,
+    );
   },
   signout: async () => {
-    const response = await apiClient.get<null>(`/api/user/signout/`);
+    const response = await apiClient.post<null>(`/api/accounts/logout/`);
     return response.data;
   },
   getUserInfo: async (userId: number) => {
-    const response = await apiClient.get<User>(`/api/user/info/${userId}/`);
+    const response = await apiClient.get<User>(`/api/accounts/info/${userId}/`);
+    return response.data;
+  },
+  getMyInfo: async () => {
+    const response = await apiClient.get<User>(`/api/accounts/info/me/`, {
+      withCredentials: true,
+    });
+
     return response.data;
   },
 
+  // TODO: token 없어도 되는데 무슨 일인지.
   postUserInfo: async (userPostForm: UserPostForm) => {
     const userFormData = new FormData();
     if (userPostForm.photo) {
-      const blob = await fetch(userPostForm.photo).then(r => r.blob());
-      const photoFile = new File([blob], 'image.png', {
-        type: 'image/png',
-      });
-      userFormData.append('photo', photoFile);
+      if (!userPostForm.photo.includes('amazonaws')) {
+        const blob = await fetch(userPostForm.photo).then(r => r.blob());
+        const photoFile = new File([blob], `${userPostForm.username}.png`, {
+          type: 'image/png',
+        });
+        userFormData.append('photo', photoFile);
+      }
     }
 
     if (userPostForm.username) {
@@ -39,10 +52,7 @@ export const api = {
       );
     }
 
-    return await apiClient.post<User>(
-      `/api/user/info/${userPostForm.id}/`,
-      userFormData,
-    );
+    return await apiClient.post<User>(`/api/accounts/info/me/`, userFormData);
   },
 
   // `/api/instrument/`
@@ -58,9 +68,13 @@ export const api = {
   },
   postCover: async (coverForm: CoverForm) => {
     const audioBlob = await fetch(coverForm.audio).then(r => r.blob());
-    const audiofile = new File([audioBlob], 'audiofile.mp3', {
-      type: 'audio/mpeg',
-    });
+    const audiofile = new File(
+      [audioBlob],
+      `${coverForm.title}_${Date.now()}.mp3`,
+      {
+        type: 'audio/mpeg',
+      },
+    );
     const coverFormData = new FormData();
     coverFormData.append('audio', audiofile);
     coverFormData.append('title', coverForm.title);

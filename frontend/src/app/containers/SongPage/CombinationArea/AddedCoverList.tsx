@@ -67,7 +67,7 @@ export default function AddedCoverList(props: Props) {
         ))
       ) : (
         <span className="text-sm py-1 px-2 font-medium text-gray-500 tracking-wider">
-          Combine covers to create your own band!
+          새로운 콜라보레이션을 만들어보세요!
         </span>
       )}
     </ul>
