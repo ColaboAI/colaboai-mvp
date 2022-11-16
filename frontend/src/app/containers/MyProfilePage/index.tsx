@@ -21,7 +21,7 @@ export default function MyProfilePage(props: Props) {
     instrumentResponse,
     checkList,
     setCheckList,
-  } = useMyProfile(props);
+  } = useMyProfile();
   const {
     onSelectFile,
     upImg,

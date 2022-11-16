@@ -193,6 +193,7 @@ describe('band api', () => {
   test(`/api/user/info/<id:int>/`, async () => {
     const mockForm: UserPostForm = {
       id: 22,
+      username: 'MOCK_USERNAME',
     };
     const mockFull: UserPostForm = {
       id: 22,

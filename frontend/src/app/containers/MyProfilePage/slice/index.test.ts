@@ -139,7 +139,6 @@ test('should handle profile Response onError', async () => {
     getMyProfileResponse,
     {
       type: AT.LOAD_PROFILE.REQUEST,
-      payload: 'random string',
     },
   ).toPromise();
 
@@ -167,6 +166,7 @@ test('should handle postProfile Response onError', async () => {
       type: AT.POST_PROFILE.REQUEST,
       payload: {
         id: 1,
+        username: 'test',
       },
     },
   ).toPromise();

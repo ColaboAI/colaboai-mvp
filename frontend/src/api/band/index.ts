@@ -18,7 +18,7 @@ export const api = {
     const response = await apiClient.get<User>(`/api/accounts/info/${userId}/`);
     return response.data;
   },
-  getMyInfo: async (accessToken: string) => {
+  getMyInfo: async () => {
     const response = await apiClient.get<User>(`/api/accounts/info/me/`, {
       withCredentials: true,
     });

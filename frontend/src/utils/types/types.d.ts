@@ -95,7 +95,7 @@ interface User {
 
 interface UserPostForm {
   id: number;
-  username?: string;
+  username: string;
   description?: string;
   photo?: string;
   instruments?: number[];
