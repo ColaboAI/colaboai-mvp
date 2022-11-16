@@ -20,7 +20,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
     instruments = InstrumentSerializer(many=True, read_only=True)
     following = serializers.SerializerMethodField()
     follower = serializers.SerializerMethodField()
-    covers = CoverSerializer(many=True, read_only=True)
     photo = ProxyFileField(allow_empty_file=True)
 
     class Meta:
@@ -33,7 +32,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "following",
             "follower",
             "instruments",
-            "covers",
         ]
 
     def get_following(self, obj):
