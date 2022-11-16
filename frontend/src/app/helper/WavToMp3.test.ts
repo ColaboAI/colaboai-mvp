@@ -34,6 +34,6 @@ describe('WavToMp3', () => {
   });
 
   test('audioBufferToWav', async () => {
-    WavToMp3.audioBufferToWav(stubAudioBuf);
+    WavToMp3.audioBufferToMp3(stubAudioBuf);
   });
 });

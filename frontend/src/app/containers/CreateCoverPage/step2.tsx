@@ -135,8 +135,8 @@ export default function CreateCoverInfoPage(props: Props) {
                 <input
                   data-testid="category"
                   type="text"
-                  name="instrumentType"
-                  id="instrumentType"
+                  name="categoryType"
+                  id="categoryType"
                   value={Form.category}
                   onChange={e => onChangeForm(e, 'category')}
                   className={styles.input}

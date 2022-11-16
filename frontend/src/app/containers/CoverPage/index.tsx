@@ -1,7 +1,7 @@
 import { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
-
+import toast from 'react-hot-toast';
 import { useCoverSlice } from './slice';
 import * as apiActions from 'api/actions';
 import { selectCover } from './slice/selectors';
@@ -10,7 +10,7 @@ import * as urls from 'utils/urls';
 import { getThumbnail } from 'utils/imageTools';
 import { selectWrapper } from 'app/wrapper/slice/selectors';
 import { api } from 'api/band';
-
+import Comment from 'app/components/Comment';
 interface MatchParams {
   id: string;
 }
@@ -24,9 +24,15 @@ export default function CoverPage(props: Props) {
   const history = useHistory();
 
   const deleteState = coverState.deleteResponse;
+  const commentsResponse = coverState.commentsResponse;
+  const coverResponse = coverState.coverResponse;
+  const user = wrapperState.user;
 
   useEffect(() => {
     dispatch(apiActions.loadCover.request(Number(props.match.params.id)));
+    dispatch(
+      apiActions.loadCoverComments.request(Number(props.match.params.id)),
+    );
     api.logCover(Number(props.match.params.id));
   }, [dispatch, props.match]);
 
@@ -61,7 +67,33 @@ export default function CoverPage(props: Props) {
     dispatch(apiActions.deleteCover.request(Number(props.match.params.id)));
   }, [dispatch, props.match.params.id]);
 
-  const coverResponse = coverState.coverResponse;
+  const onCommentSubmit = useCallback(
+    (
+      content: string,
+      parentComment: number | null,
+      setNewText: (text: string) => void,
+    ) => {
+      if (user) {
+        if (content) {
+          dispatch(
+            apiActions.createCoverComment.request({
+              coverId: Number(props.match.params.id),
+              content,
+              parentComment,
+              userId: user.id,
+            }),
+          );
+          setNewText('');
+          toast.success('댓글이 정상적으로 작성되었습니다.');
+        } else {
+          toast.error('내용을 입력해주세요.');
+        }
+      } else {
+        toast.error('로그인 후 댓글 작성 가능합니다.');
+      }
+    },
+    [dispatch, props.match.params.id, user],
+  );
   const cover = coverResponse.data;
   const author = cover?.user;
   const editable =
@@ -178,6 +210,16 @@ export default function CoverPage(props: Props) {
             </div>
             <div className="text-sm">{cover.tags.join(' | ')}</div>
           </div>
+          {coverResponse.data && commentsResponse.data && (
+            <div className="sm:w-full sm:px-8 py-4 max-w-screen-lg">
+              <Comment
+                commentList={commentsResponse.data}
+                onCommentSubmit={onCommentSubmit}
+                parentObjectId={coverResponse.data.id}
+                parentObjectType="cover"
+              />
+            </div>
+          )}
         </div>
       ) : coverResponse.loading ? (
         <div>Loading Song Info...</div>

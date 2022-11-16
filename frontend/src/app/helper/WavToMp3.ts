@@ -1,6 +1,6 @@
 import * as lamejs from 'lamejs';
 
-export const audioBufferToWav = aBuffer => {
+export const audioBufferToMp3 = aBuffer => {
   function setUint16(data) {
     btwView.setUint16(btwPos, data, true);
     btwPos += 2;

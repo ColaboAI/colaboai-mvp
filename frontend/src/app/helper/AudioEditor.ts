@@ -1,6 +1,6 @@
 import * as lamejs from 'lamejs';
 import { Segment } from 'peaks.js';
-import { audioBufferToWav } from './WavToMp3';
+import { audioBufferToMp3 } from './WavToMp3';
 // Reference : https://github.com/Vinit-Dantkale/AudioFy : mp3 형식
 // https://stackoverflow.com/questions/61264581/how-to-convert-audio-buffer-to-mp3-in-javascript : wav to mp3
 // this audio editor only handle .wav, .mp3 file
@@ -29,7 +29,7 @@ export default class AudioEditor {
         const tmpBuf = await new AudioContext().decodeAudioData(
           this.arrayBuffer.result,
         );
-        const { fileFromBlob, bUrl } = audioBufferToWav(tmpBuf);
+        const { fileFromBlob, bUrl } = audioBufferToMp3(tmpBuf);
         file = fileFromBlob;
         blobUrl = bUrl;
       } catch (e) {

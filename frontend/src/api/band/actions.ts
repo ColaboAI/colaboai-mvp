@@ -6,6 +6,12 @@ import { AxiosError } from 'axios';
 export const signin = asyncAction<SignInForm, UserInfo, string>(AT.LOAD_SIGNIN);
 export const signup = asyncAction<SignUpForm, null, string>(AT.LOAD_SIGNUP);
 export const loadProfile = asyncAction<number, User, string>(AT.LOAD_PROFILE);
+export const loadMyProfile = asyncAction<undefined, User, AxiosError>(
+  AT.LOAD_MY_PROFILE,
+);
+export const refreshToken = asyncAction<undefined, string, string>(
+  AT.REFRESH_TOKEN,
+);
 export const postProfile = asyncAction<UserPostForm, User, string>(
   AT.POST_PROFILE,
 );
@@ -34,6 +40,28 @@ export const deleteCover = asyncAction<number, number, AxiosError>(
 export const createCover = asyncAction<CoverForm, Cover, AxiosError>(
   AT.CREATE_COVER,
 );
+export const loadCoverComments = asyncAction<
+  number,
+  CoverComment[],
+  AxiosError
+>(AT.LOAD_COVER_COMMENTS);
+export const createCoverComment = asyncAction<
+  CoverCommentForm,
+  CoverComment,
+  AxiosError
+>(AT.CREATE_COVER_COMMENT);
+
+export const editCoverComment = asyncAction<
+  CoverCommentForm,
+  CoverComment,
+  AxiosError
+>(AT.EDIT_COVER_COMMENT);
+
+export const deleteCoverComment = asyncAction<
+  DeleteCommentForm,
+  number,
+  AxiosError
+>(AT.DELETE_COVER_COMMENT);
 
 // combination actions
 export const createCombination = asyncAction<
@@ -69,3 +97,25 @@ export const loadSong = asyncAction<number, Song, AxiosError>(AT.LOAD_SONG);
 export const loadSongsSearch = asyncAction<string, Song[], AxiosError>(
   AT.LOAD_SONGS_SEARCH,
 );
+
+export const loadSongComments = asyncAction<number, SongComment[], AxiosError>(
+  AT.LOAD_SONG_COMMENTS,
+);
+
+export const createSongComment = asyncAction<
+  SongCommentForm,
+  SongComment,
+  AxiosError
+>(AT.CREATE_SONG_COMMENT);
+
+export const editSongComment = asyncAction<
+  SongCommentForm,
+  SongComment,
+  AxiosError
+>(AT.EDIT_SONG_COMMENT);
+
+export const deleteSongComment = asyncAction<
+  DeleteCommentForm,
+  number,
+  AxiosError
+>(AT.DELETE_SONG_COMMENT);

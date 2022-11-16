@@ -58,6 +58,8 @@ describe('index', () => {
       user: {
         id: 0,
         username: 'USERNAME',
+        follower: 0,
+        following: 0,
       },
     };
     api.signout = jest.fn();

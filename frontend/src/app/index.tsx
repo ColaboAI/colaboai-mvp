@@ -8,6 +8,7 @@
 
 import { Helmet } from 'react-helmet-async';
 import { Switch, Route, Redirect, BrowserRouter } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 
 import Wrapper from './wrapper';
 import MainPage from './containers/MainPage';
@@ -21,17 +22,18 @@ import {
   CreateCoverInfo,
   CreateCoverRecord,
 } from './containers/CreateCoverPage';
-import ProfilePage from './containers/ProfilePage';
+import ProfilePage from './containers/MyProfilePage/ProfilePage';
+import CoverEditPage from './containers/CoverEditPage';
+import MyProfilePage from './containers/MyProfilePage';
 
 import * as url from 'utils/urls';
-import CoverEditPage from './containers/CoverEditPage';
 
 export function App() {
   return (
     <BrowserRouter>
       <div className="app">
-        <Helmet titleTemplate="%s - MetaBand" defaultTitle="MetaBand">
-          <meta name="description" content="MetaBand" />
+        <Helmet titleTemplate="%s - ColaboAI" defaultTitle="ColaboAI">
+          <meta name="description" content="ColaboAI" />
         </Helmet>
 
         <Wrapper>
@@ -63,10 +65,12 @@ export function App() {
               component={CreateCoverInfo}
             />
             <Route exact path={url.Song(':id')} component={CoverPage} />
+            <Route exact path={url.Profile('me')} component={MyProfilePage} />
             <Route exact path={url.Profile(':id')} component={ProfilePage} />
             <Redirect to={url.Main()} />
           </Switch>
         </Wrapper>
+        <Toaster position="top-center" />
       </div>
     </BrowserRouter>
   );

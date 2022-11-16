@@ -9,12 +9,14 @@ export interface CoverState {
   name: string;
   coverResponse: AsyncStateType<Cover>;
   deleteResponse: AsyncStateType<number>;
+  commentsResponse: AsyncStateType<CoverComment[]>;
 } // state 형식 정의
 
 export const initialState: CoverState = {
   name: 'cover',
   coverResponse: { loading: false },
   deleteResponse: { loading: false },
+  commentsResponse: { loading: false },
 };
 
 const slice = createSlice({
@@ -49,6 +51,81 @@ const slice = createSlice({
       state.deleteResponse = { loading: false };
       state.deleteResponse.error = action.payload;
       return state;
+    },
+
+    loadingCoverCommentsResponse(state, _action: PayloadAction<any>) {
+      state.commentsResponse = { loading: true };
+    },
+
+    successCoverCommentsResponse(state, action: PayloadAction<CoverComment[]>) {
+      state.commentsResponse = { loading: false };
+      state.commentsResponse.data = action.payload;
+    },
+    errorCoverCommentsResponse(state, action: PayloadAction<string>) {
+      state.commentsResponse = { loading: false };
+      state.commentsResponse.error = action.payload;
+    },
+    loadingCreateCommentResponse(state, _action: PayloadAction<any>) {
+      state.commentsResponse = {
+        loading: true,
+        data: state.commentsResponse.data,
+      };
+    },
+    successCreateCommentResponse(state, action: PayloadAction<CoverComment>) {
+      state.commentsResponse.loading = false;
+      if (state.commentsResponse && state.commentsResponse.data) {
+        if (action.payload.parentComment) {
+          const parentComment = state.commentsResponse.data.find(
+            comment => comment.id === action.payload.parentComment,
+          );
+          if (parentComment) {
+            parentComment.reply.push(action.payload);
+          }
+        } else {
+          state.commentsResponse.data.push(action.payload);
+        }
+      } else {
+        state.commentsResponse.data = [action.payload];
+      }
+    },
+    errorCreateCommentResponse(state, action: PayloadAction<string>) {
+      state.commentsResponse = { loading: false };
+      state.commentsResponse.error = action.payload;
+    },
+    loadingDeleteCommentResponse(state, _action: PayloadAction<any>) {
+      state.commentsResponse = { loading: true };
+    },
+    successDeleteCommentResponse(state, action: PayloadAction<number>) {
+      state.commentsResponse = { loading: false };
+      if (state.commentsResponse.data && state.commentsResponse.data.length) {
+        state.commentsResponse.data = state.commentsResponse.data.filter(
+          comment => comment.id !== action.payload,
+        );
+      }
+    },
+    errorDeleteCommentResponse(state, action: PayloadAction<string>) {
+      state.commentsResponse = { loading: false };
+      state.commentsResponse.error = action.payload;
+    },
+
+    loadingEditCommentResponse(state, _action: PayloadAction<any>) {
+      state.commentsResponse = { loading: true };
+    },
+    successEditCommentResponse(state, action: PayloadAction<CoverComment>) {
+      state.commentsResponse = { loading: false };
+      if (state.commentsResponse.data && state.commentsResponse.data.length) {
+        const oldComment = state.commentsResponse.data.find(
+          comment => comment.id === action.payload.id,
+        );
+        if (oldComment) {
+          oldComment.content = action.payload.content;
+          oldComment.updatedAt = action.payload.updatedAt;
+        }
+      }
+    },
+    errorEditCommentResponse(state, action: PayloadAction<string>) {
+      state.commentsResponse = { loading: false };
+      state.commentsResponse.error = action.payload;
     },
   },
 });

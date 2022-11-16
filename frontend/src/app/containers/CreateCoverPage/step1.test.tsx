@@ -253,7 +253,7 @@ describe('<CreateCoverRecord>', () => {
           return {
             status: 'idle',
             error: '',
-            mediaBlobUrl: null,
+            mediaBlobUrl: undefined,
             isAudioMuted: false,
             previewStream: null,
             previewAudioStream: null,

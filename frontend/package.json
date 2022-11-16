@@ -24,6 +24,7 @@
     "@types/webpack": "5.28.0",
     "@types/webpack-env": "1.16.2",
     "axios": "0.24.0",
+    "axios-case-converter": "0.11.1",
     "canvas": "2.8.0",
     "chalk": "4.1.1",
     "cross-env": "7.0.3",
@@ -42,7 +43,7 @@
     "lamejs": "1.2.0",
     "lint-staged": "10.3.0",
     "node-plop": "0.26.2",
-    "peaks.js": "~2.0.0",
+    "peaks.js": "2.1.0",
     "plop": "2.7.4",
     "prettier": "2.3.2",
     "react": "18.2.0",
@@ -50,9 +51,11 @@
     "react-dom": "18.2.0",
     "react-easy-crop": "3.5.3",
     "react-helmet-async": "1.0.9",
+    "react-hook-form": "7.39.4",
+    "react-hot-toast": "2.4.0",
     "react-i18next": "11.11.1",
     "react-image-crop": "9.0.5",
-    "react-media-recorder": "1.6.2",
+    "react-media-recorder": "1.6.6",
     "react-player": "2.11.0",
     "react-redux": "8.0.4",
     "react-router-dom": "5.2.0",
@@ -163,5 +166,5 @@
       }
     }
   },
-  "proxy": "http://localhost:8000/"
+  "proxy": "http://localhost:8000"
 }

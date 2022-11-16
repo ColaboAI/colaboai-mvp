@@ -10,14 +10,30 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+from datetime import timedelta
 import os
 import json
 from json.decoder import JSONDecodeError
 from pathlib import Path
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from rest_framework import permissions
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Swagger Study API",
+        default_version="v1",
+        description="Swagger Study를 위한 API 문서",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(name="test", email="test@test.com"),
+        license=openapi.License(name="Test License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -31,7 +47,7 @@ except (FileNotFoundError, JSONDecodeError):
     secrets = {}
 
 
-def get_secret(setting, fallback):
+def get_secret(setting, fallback="asdsad"):
     try:
         return secrets[setting]
     except KeyError:
@@ -42,9 +58,9 @@ SECRET_KEY = get_secret("SECRET_KEY", "ASDFG")
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = get_secret("DEBUG", True)
+DEBUG = get_secret("DEBUG", True) == "True"
 
-ALLOWED_HOSTS = get_secret("ALLOWED_HOSTS", ["localhost"])
+ALLOWED_HOSTS = get_secret("ALLOWED_HOSTS", ["localhost", "127.0.0.1"])
 
 
 # Application definition
@@ -56,11 +72,25 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
     "django_apscheduler",
     "corsheaders",
     "rest_framework",
+    "rest_framework.authtoken",
     "band",
     "user",
+    "dj_rest_auth",
+    "dj_rest_auth.registration",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.twitter",
+    "allauth.socialaccount.providers.facebook",
+    "allauth.socialaccount.providers.kakao",
+    "allauth.socialaccount.providers.naver",
+    "storages",  # for S3, django-storages
+    "drf_yasg",  # swagger
 ]
 
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"  # Default
@@ -69,8 +99,38 @@ SCHEDULER_DEFAULT = True
 
 # Use Custom User as default user
 AUTH_USER_MODEL = "user.CustomUser"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_USERNAME_BLACKLIST = ["admin", "master", "colaboai"]
+SITE_ID = 1
 
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
+EMAIL_HOST = get_secret("EMAIL_HOST")  # 메일 호스트 서버
+EMAIL_PORT = get_secret("EMAIL_PORT")  # gmail과 통신하는 포트
+EMAIL_HOST_USER = get_secret("EMAIL_HOST_USER")  # email 계정
+
+EMAIL_HOST_PASSWORD = get_secret("EMAIL_HOST_PASSWORD")  # 발신할 메일의 비밀번호
+
+EMAIL_USE_TLS = True  # TLS 보안 방법
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+URL_FRONT = "loop.colabo.ml"  # 공개적인 웹페이지가 있다면 등록
+
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True  # 유저가 받은 링크를 클릭하면 회원가입 완료되게끔
+ACCOUNT_EMAIL_REQUIRED = True
+# TODO: 이메일 인증을 통해 회원가입을 완료하게끔?
+ACCOUNT_EMAIL_VERIFICATION = "none"  # "mandatory"
+
+EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = "/"  # 이메일 인증 후 리다이렉트할 페이지
+
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
+
+# 이메일에 자동으로 표시되는 사이트 정보
+ACCOUNT_EMAIL_SUBJECT_PREFIX = "colaobAI"
 # To use Auto Field id
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
@@ -89,14 +149,14 @@ MIDDLEWARE = [
 ROOT_URLCONF = "bandcruit.urls"
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://www.metaband.space/*",
-    "metaband.space/*",
+    "https://www.colabo.ml/*",
+    "colabo.ml/*",
     "http://localhost",
-    "metaband.space",
+    "colabo.ml",
 ]
 CORS_ORIGIN_WHITELIST = [
-    "https://www.metaband.space",
-    "https://metaband.space",
+    "https://www.colabo.ml",
+    "https://colabo.ml",
     "http://localhost",
 ]
 
@@ -140,9 +200,15 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",},
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",},
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",},
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
 ]
 
 
@@ -163,12 +229,40 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-# STATIC_URL = "/static/"
-STATIC_URL = "/static/"
+USE_S3 = get_secret("USE_S3", "False") == "True"
+if USE_S3:
+    # aws settings
+    AWS_ACCESS_KEY_ID = get_secret("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = get_secret("AWS_SECRET_ACCESS_KEY")
+    AWS_STORAGE_BUCKET_NAME = get_secret("AWS_STORAGE_BUCKET_NAME")
+    AWS_DEFAULT_ACL = "public-read"
+    AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+    AWS_S3_OBJECT_PARAMETERS = {
+        "ACL": "public-read",
+        "CacheControl": "max-age=86400",
+    }
+    STATIC_LOCATION = "static"
+    # STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/"
+    # STATICFILES_STORAGE = "hello_django.storage_backends.StaticStorage"
+    # s3 public media settings
+    PUBLIC_MEDIA_LOCATION = "media"
+    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
+    DEFAULT_FILE_STORAGE = "band.storage_backends.PublicMediaStorage"
 
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-MEDIA_URL = "/media/"
-MEDIA_URL = "/media/"
+    # 개발용 임시 static local
+    STATIC_URL = "/static/"
+    STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+else:
+    STATIC_URL = "/static/"
+    STATIC_ROOT = os.path.join(BASE_DIR, "static")
+    MEDIA_URL = "/media/"
+    MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+DEFAULT_FILE_STORAGE = "band.storage_backends.PublicMediaStorage"
+# STATICFILES_STORAGE = "band.storage_backends.StaticStorage"
+# STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
+
 
 # maximum file upload size: currently 15MB
 FILE_UPLOAD_MAX_MEMORY_SIZE = 15728640
@@ -179,10 +273,91 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticatedOrReadOnly"
     ],
-    "TEST_REQUEST_DEFAULT_FORMAT": "json",
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.TokenAuthentication",
+        "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
+    ),
+    "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
+    # "TEST_REQUEST_DEFAULT_FORMAT": "json",
 }
 
-# For https header
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": False,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "AUTH_HEADER_NAME": "Authorization",
+}
+# TODO: uncomment this in production
+# JWT_AUTH_SECURE = True
+REST_USE_JWT = True
+REST_SESSION_LOGIN = True
+JWT_AUTH_HTTPONLY = True
+# JWT_AUTH_COOKIE = "colaboai-auth"
+JWT_AUTH_REFRESH_COOKIE = "colaboai-refresh-token"
 
+# For https header
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+REST_AUTH_SERIALIZERS = {
+    "USER_DETAILS_SERIALIZER": "user.serializers.UserSerializer",
+}
+
+# TODO: 회원가입시 refresh 토큰 반환되는것 수정하기.
+
+# AUTHENTICATION_BACKENDS = [
+#     # allauth specific authentication methods, such as login by e-mail
+#     "allauth.account.auth_backends.AuthenticationBackend",
+#     # Needed to login by username in Django admin, regardless of allauth
+#     "django.contrib.auth.backends.ModelBackend",
+# ]
+
+# For logging
+from datetime import datetime
+
+now = datetime.now()
+str_now = now.strftime("%y%m%d_%H")
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{asctime} {levelname} {module} {message}",
+            "datefmt": "%Y-%m-%d %H:%M",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+        "debug_log": {
+            "level": "DEBUG",
+            "class": "logging.FileHandler",
+            "filename": f"logs/debug/deb__{str_now}.log",
+            "formatter": "verbose",
+        },
+        "error_log": {
+            "level": "ERROR",
+            "class": "logging.FileHandler",
+            "filename": f"logs/error/err__{str_now}.log",
+            "formatter": "verbose",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console", "debug_log"],
+            "level": "DEBUG",
+            "propagate": True,
+        },
+        "django.request": {
+            "handlers": ["error_log"],
+            "level": "ERROR",
+            "propagate": True,
+        },
+    },
+}

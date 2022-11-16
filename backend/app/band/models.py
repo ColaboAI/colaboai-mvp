@@ -1,6 +1,7 @@
 """ band models
 Django models for band
 """
+import os
 from django.db import models
 from django.db.models.deletion import CASCADE
 from django.db.models.fields import CharField, IntegerField
@@ -26,6 +27,22 @@ class Instrument(models.Model):
         db_table = "Instrument"
 
 
+class Category(models.Model):
+    """
+    Model for Category
+    :type name: str
+    :field name: The name of category
+    """
+
+    name: str = models.CharField(max_length=30, db_column="name")
+
+    def __str__(self):
+        return f"([{self.pk}] {self.name})"
+
+    class Meta:
+        db_table = "Category"
+
+
 class Song(models.Model):
     """Model for Song
     :field title: The title of this song
@@ -40,12 +57,19 @@ class Song(models.Model):
     category: str = models.CharField(max_length=30, db_column="category")
     reference: str = models.CharField(max_length=255, db_column="reference")
     description: str = models.TextField(db_column="description", blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"([{self.pk}] {self.title})"
 
     class Meta:
         db_table = "Song"
+
+
+def cover_audio_path(instance, filename):
+    print(f"{instance.title}/{instance.instrument_id}/{filename}")
+    return f"cover_audio/{instance.song_id}/{instance.instrument_id}/{filename}"
 
 
 class Cover(models.Model):
@@ -63,10 +87,11 @@ class Cover(models.Model):
     :field combination: The 'Combination' this cover was made to / null if there was no combination
     """
 
-    audio = models.FileField(upload_to="cover_audio", editable=False)
+    audio = models.FileField(upload_to=cover_audio_path, editable=False)
     title: str = models.CharField(max_length=50, db_column="title")
     category: str = models.CharField(
-        max_length=30, db_column="category", editable=False
+        max_length=30,
+        db_column="category",
     )
     description: str = models.TextField(db_column="description", blank=True)
     user: User = ForeignKey(
@@ -88,6 +113,8 @@ class Cover(models.Model):
         null=True,
         blank=True,
     )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def count_views(self) -> int:
         return CoverLog.objects.filter(cover=self).count()
@@ -112,6 +139,7 @@ class Combination(models.Model):
     likes = ManyToManyField(
         User, db_table="Combination_Likes", related_name="like_combinations", blank=True
     )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     @property
     def like_count(self) -> int:
@@ -134,7 +162,7 @@ class Combination(models.Model):
 class CoverTag(models.Model):
     """CoverTag model"""
 
-    name: str = CharField(max_length=30, db_column="name")
+    name: str = CharField(max_length=30, db_column="name", unique=True)
 
     class Meta:
         db_table = "CoverTag"
@@ -171,8 +199,69 @@ class CombinationLog(models.Model):
 class RecoSong(models.Model):
     """RecoSong model
     load from s3 refresh every 6 hours"""
+
     song: Song = ForeignKey(Song, on_delete=models.CASCADE)
     recos = models.CharField(max_length=50, db_column="recos")
 
     class Meta:
         db_table = "RecoSong"
+
+
+class CommentBase(models.Model):
+    """CoverComment model"""
+
+    user: User = ForeignKey(
+        User, related_name="%(app_label)s_%(class)s_comments", on_delete=models.CASCADE
+    )
+    content = models.TextField(db_column="comment")
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    likes = ManyToManyField(
+        User,
+        related_name="%(app_label)s_%(class)s_Likes",
+        blank=True,
+    )
+    parent_comment = models.ForeignKey(
+        "self",
+        related_name="reply",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+
+    @property
+    def like_count(self) -> int:
+        return self.likes.count()
+
+    def __str__(self):
+        return f"([{self.pk}] {self.user}'s comment)"
+
+    class Meta:
+        abstract = True
+
+
+class CoverComment(CommentBase):
+    """CoverComment model"""
+
+    cover: Cover = ForeignKey(Cover, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = "CoverComment"
+
+
+class SongComment(CommentBase):
+    """SongComment model"""
+
+    song: Song = ForeignKey(Song, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = "SongComment"
+
+
+class CombinationComment(CommentBase):
+    """CombinationComment model"""
+
+    combination: Combination = ForeignKey(Combination, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = "CombinationComment"

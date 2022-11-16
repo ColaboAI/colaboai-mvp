@@ -5,7 +5,7 @@ import { SagaInjectionModes } from 'redux-injectors';
 import { createSlice } from 'utils/@reduxjs/toolkit';
 import { useInjectReducer, useInjectSaga } from 'utils/redux-injectors';
 import songPageSaga from './saga';
-
+// TODO: apply pagenation
 /* --- STATE --- */
 export interface SongState {
   songResponse: AsyncStateType<Song>;
@@ -13,6 +13,7 @@ export interface SongState {
   combinationsResponse: AsyncStateType<Combination[]>;
   coversResponse: AsyncStateType<Cover[]>;
   instrumentsResponse: AsyncStateType<Instrument[]>;
+  commentsResponse: AsyncStateType<SongComment[]>;
 } // state 형식 정의
 
 export const initialState: SongState = {
@@ -21,6 +22,7 @@ export const initialState: SongState = {
   combinationsResponse: { loading: false },
   coversResponse: { loading: false },
   instrumentsResponse: { loading: false },
+  commentsResponse: { loading: false },
 };
 
 const slice = createSlice({
@@ -88,6 +90,81 @@ const slice = createSlice({
     errorInstrumentsResponse(state, action: PayloadAction<string>) {
       state.instrumentsResponse = { loading: false };
       state.instrumentsResponse.error = action.payload;
+    },
+
+    loadingSongCommentsResponse(state, _action: PayloadAction<any>) {
+      state.commentsResponse = { loading: true };
+    },
+
+    successSongCommentsResponse(state, action: PayloadAction<SongComment[]>) {
+      state.commentsResponse = { loading: false };
+      state.commentsResponse.data = action.payload;
+    },
+    errorSongCommentsResponse(state, action: PayloadAction<string>) {
+      state.commentsResponse = { loading: false };
+      state.commentsResponse.error = action.payload;
+    },
+    loadingCreateCommentResponse(state, _action: PayloadAction<any>) {
+      state.commentsResponse = {
+        loading: true,
+        data: state.commentsResponse.data,
+      };
+    },
+    successCreateCommentResponse(state, action: PayloadAction<SongComment>) {
+      state.commentsResponse.loading = false;
+      if (state.commentsResponse && state.commentsResponse.data) {
+        if (action.payload.parentComment) {
+          const parentComment = state.commentsResponse.data.find(
+            comment => comment.id === action.payload.parentComment,
+          );
+          if (parentComment) {
+            parentComment.reply.push(action.payload);
+          }
+        } else {
+          state.commentsResponse.data.push(action.payload);
+        }
+      } else {
+        state.commentsResponse.data = [action.payload];
+      }
+    },
+    errorCreateCommentResponse(state, action: PayloadAction<string>) {
+      state.commentsResponse = { loading: false };
+      state.commentsResponse.error = action.payload;
+    },
+    loadingDeleteCommentResponse(state, _action: PayloadAction<any>) {
+      state.commentsResponse = { loading: true };
+    },
+    successDeleteCommentResponse(state, action: PayloadAction<number>) {
+      state.commentsResponse = { loading: false };
+      if (state.commentsResponse.data && state.commentsResponse.data.length) {
+        state.commentsResponse.data = state.commentsResponse.data.filter(
+          comment => comment.id !== action.payload,
+        );
+      }
+    },
+    errorDeleteCommentResponse(state, action: PayloadAction<string>) {
+      state.commentsResponse = { loading: false };
+      state.commentsResponse.error = action.payload;
+    },
+
+    loadingEditCommentResponse(state, _action: PayloadAction<any>) {
+      state.commentsResponse = { loading: true };
+    },
+    successEditCommentResponse(state, action: PayloadAction<SongComment>) {
+      state.commentsResponse = { loading: false };
+      if (state.commentsResponse.data && state.commentsResponse.data.length) {
+        const oldComment = state.commentsResponse.data.find(
+          comment => comment.id === action.payload.id,
+        );
+        if (oldComment) {
+          oldComment.content = action.payload.content;
+          oldComment.updatedAt = action.payload.updatedAt;
+        }
+      }
+    },
+    errorEditCommentResponse(state, action: PayloadAction<string>) {
+      state.commentsResponse = { loading: false };
+      state.commentsResponse.error = action.payload;
     },
   },
 });
