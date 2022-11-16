@@ -418,17 +418,16 @@ class FacebookLogin(SocialLoginView):
 
 class UserInfo(
     mixins.RetrieveModelMixin,
-    mixins.UpdateModelMixin,
-    mixins.DestroyModelMixin,
     generics.GenericAPIView,
 ):
     """user/info/<pk>"""
 
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = UserProfileSerializer
+    queryset = User.objects.all()
 
-    def get_object(self):
-        return self.request.user
+    def get(self, request: HttpRequest, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
 
 
 class MyInfo(
