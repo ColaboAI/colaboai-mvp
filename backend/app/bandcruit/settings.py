@@ -72,16 +72,15 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
     "django_apscheduler",
     "corsheaders",
     "rest_framework",
     "rest_framework.authtoken",
-    "rest_framework_simplejwt",
     "band",
     "user",
     "dj_rest_auth",
     "dj_rest_auth.registration",
-    "django.contrib.sites",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
@@ -275,23 +274,25 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticatedOrReadOnly"
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.TokenAuthentication",
         "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
     ),
-    "TEST_REQUEST_DEFAULT_FORMAT": "json",
+    "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
+    # "TEST_REQUEST_DEFAULT_FORMAT": "json",
 }
-REST_USE_JWT = True
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
-    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "AUTH_HEADER_NAME": "Authorization",
 }
 # TODO: uncomment this in production
 # JWT_AUTH_SECURE = True
-# REST_SESSION_LOGIN = False
-
+REST_USE_JWT = True
+REST_SESSION_LOGIN = True
 JWT_AUTH_HTTPONLY = True
 # JWT_AUTH_COOKIE = "colaboai-auth"
 JWT_AUTH_REFRESH_COOKIE = "colaboai-refresh-token"
@@ -301,7 +302,62 @@ USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 REST_AUTH_SERIALIZERS = {
-    "USER_DETAILS_SERIALIZER": "user.serializers.UserProfileSerializer"
+    "USER_DETAILS_SERIALIZER": "user.serializers.UserSerializer",
 }
 
 # TODO: 회원가입시 refresh 토큰 반환되는것 수정하기.
+
+# AUTHENTICATION_BACKENDS = [
+#     # allauth specific authentication methods, such as login by e-mail
+#     "allauth.account.auth_backends.AuthenticationBackend",
+#     # Needed to login by username in Django admin, regardless of allauth
+#     "django.contrib.auth.backends.ModelBackend",
+# ]
+
+# For logging
+from datetime import datetime
+
+now = datetime.now()
+str_now = now.strftime("%y%m%d_%H")
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{asctime} {levelname} {module} {message}",
+            "datefmt": "%Y-%m-%d %H:%M",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+        "debug_log": {
+            "level": "DEBUG",
+            "class": "logging.FileHandler",
+            "filename": f"logs/debug/deb__{str_now}.log",
+            "formatter": "verbose",
+        },
+        "error_log": {
+            "level": "ERROR",
+            "class": "logging.FileHandler",
+            "filename": f"logs/error/err__{str_now}.log",
+            "formatter": "verbose",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console", "debug_log"],
+            "level": "DEBUG",
+            "propagate": True,
+        },
+        "django.request": {
+            "handlers": ["error_log"],
+            "level": "ERROR",
+            "propagate": True,
+        },
+    },
+}

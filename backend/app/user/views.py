@@ -422,18 +422,35 @@ class UserInfo(
     mixins.DestroyModelMixin,
     generics.GenericAPIView,
 ):
-    """user/info/`int:user_id`/"""
+    """user/info/<pk>"""
 
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = UserProfileSerializer
+
+    def get_object(self):
+        return self.request.user
+
+
+class MyInfo(
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    generics.GenericAPIView,
+):
+    """user/me/"""
+
+    permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
     serializer_class = UserProfileSerializer
 
+    def get_object(self):
+        return self.request.user
+
     def get(self, request: HttpRequest, *args, **kwargs):
+
         return self.retrieve(request, *args, **kwargs)
 
     def post(self, request: HttpRequest, **kwargs):
-        if request.user.id != kwargs["pk"]:
-            return Response(status=status.HTTP_403_FORBIDDEN)
-
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         print("Before serializer is valid : ", request.data)

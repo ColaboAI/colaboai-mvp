@@ -10,7 +10,7 @@ User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """Serializer for user"""
+    """Serializer for user basic info"""
 
     photo = ProxyFileField(allow_empty_file=True)
 
