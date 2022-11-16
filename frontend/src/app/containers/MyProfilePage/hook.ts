@@ -30,7 +30,6 @@ export const useMyProfile = (props: Props) => {
 
   const [form, setForm] = useState<UserPostForm>({
     ...initForm,
-    id: Number(props.match.params.id),
   });
   const [checkList, setCheckList] = useState<number[]>(form.instruments || []);
 
@@ -69,15 +68,19 @@ export const useMyProfile = (props: Props) => {
           setCheckList(user.instruments.map(instrument => instrument.id));
         }
       } else {
-        dispatch(apiActions.loadProfile.request(Number(props.match.params.id)));
+        if (wrapperState.accessToken) {
+          dispatch(apiActions.loadMyProfile.request(wrapperState.accessToken));
+        } else {
+          dispatch(apiActions.refreshToken.request());
+        }
       }
     }
   }, [
     profileResponse,
     dispatch,
     history,
-    props.match.params.id,
     wrapperState.user,
+    wrapperState.accessToken,
   ]);
 
   // handle post response

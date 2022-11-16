@@ -85,7 +85,7 @@ interface SongForm {
 interface User {
   id: number;
   username: string;
-  email: string;
+  // email: string;
   description: string;
   photo: string;
   following: number;

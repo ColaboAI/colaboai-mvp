@@ -16,7 +16,7 @@ import * as AT from 'api/actionTypes';
 import { runSaga } from 'redux-saga';
 import { api } from 'api/band';
 import { selectProfile } from './selectors';
-import { getProfileResponse, postProfileResponse } from './saga';
+import { getMyProfileResponse, postProfileResponse } from './saga';
 
 jest.mock('utils/redux-injectors', () => {
   const originalModule = jest.requireActual('utils/redux-injectors');
@@ -136,10 +136,10 @@ test('should handle profile Response onError', async () => {
     {
       dispatch: action => dispatched.push(action),
     },
-    getProfileResponse,
+    getMyProfileResponse,
     {
       type: AT.LOAD_PROFILE.REQUEST,
-      payload: 1,
+      payload: 'random string',
     },
   ).toPromise();
 

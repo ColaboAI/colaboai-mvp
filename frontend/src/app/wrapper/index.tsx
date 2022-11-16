@@ -10,7 +10,6 @@ import { useWrapperSlice, wrapperActions } from './slice';
 import * as apiActions from 'api/actions';
 import * as url from 'utils/urls';
 import Player from 'app/helper/Player';
-
 interface Props {
   children?: React.ReactChild | React.ReactChild[];
 }
@@ -56,12 +55,12 @@ export default function Wrapper(props: Props) {
 
   const onSignOutClicked = useCallback(() => {
     dispatch(wrapperActions.signOut());
-    history.go(0);
+    history.replace(url.Main());
   }, [dispatch, history]);
 
   const onProfileClicked = useCallback(() => {
-    history.push(url.Profile(`${user!.id}`));
-  }, [history, user]);
+    history.push(url.Profile('me'));
+  }, [history]);
 
   const setTrack = useCallback(
     (track: TrackInfo) => {
