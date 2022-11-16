@@ -36,10 +36,6 @@ export default function MyProfilePage(props: Props) {
     previewCanvasRef,
   } = useCropImage();
 
-  function onChooseInstruments(_event: any) {
-    onChangeForm('instruments', checkList);
-  }
-
   function onEditPictureClick(_event: any) {
     _event.preventDefault();
     onChangeForm('photo', croppedImg);

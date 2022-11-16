@@ -1,4 +1,4 @@
-import { apiClient, setAuthTokenHeader } from './client';
+import { apiClient } from './client';
 export const api = {
   // users
   signup: async (form: SignUpForm) => {
