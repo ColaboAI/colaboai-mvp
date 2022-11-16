@@ -6,6 +6,12 @@ import { AxiosError } from 'axios';
 export const signin = asyncAction<SignInForm, UserInfo, string>(AT.LOAD_SIGNIN);
 export const signup = asyncAction<SignUpForm, null, string>(AT.LOAD_SIGNUP);
 export const loadProfile = asyncAction<number, User, string>(AT.LOAD_PROFILE);
+export const loadMyProfile = asyncAction<string, User, string>(
+  AT.LOAD_MY_PROFILE,
+);
+export const refreshToken = asyncAction<undefined, string, string>(
+  AT.REFRESH_TOKEN,
+);
 export const postProfile = asyncAction<UserPostForm, User, string>(
   AT.POST_PROFILE,
 );

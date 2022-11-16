@@ -4,7 +4,7 @@ import { SagaInjectionModes } from 'redux-injectors';
 import { createSlice } from 'utils/@reduxjs/toolkit';
 import { useInjectReducer, useInjectSaga } from 'utils/redux-injectors';
 import wrapperSaga from './saga';
-
+import { setAuthTokenHeader } from 'api/band/client';
 /* --- STATE --- */
 export interface WrapperState {
   user?: UserInfo;
@@ -23,7 +23,10 @@ const slice = createSlice({
   reducers: {
     setUser(state, action: PayloadAction<UserLoginResponse>) {
       state.user = action.payload.user;
-      state.accessToken = action.payload.accessToken;
+      if (action.payload.accessToken) {
+        state.accessToken = action.payload.accessToken;
+        setAuthTokenHeader(action.payload.accessToken);
+      }
       return state;
     },
     setCurrentPlaying(state, action: PayloadAction<TrackInfo>) {

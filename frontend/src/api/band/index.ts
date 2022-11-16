@@ -1,4 +1,4 @@
-import { apiClient } from './client';
+import { apiClient, setAuthTokenHeader } from './client';
 export const api = {
   // users
   signup: async (form: SignUpForm) => {
@@ -11,22 +11,32 @@ export const api = {
     );
   },
   signout: async () => {
-    const response = await apiClient.get<null>(`/api/accounts/logout/`);
+    const response = await apiClient.post<null>(`/api/accounts/logout/`);
     return response.data;
   },
   getUserInfo: async (userId: number) => {
     const response = await apiClient.get<User>(`/api/accounts/info/${userId}/`);
     return response.data;
   },
+  getMyInfo: async (accessToken: string) => {
+    const response = await apiClient.get<User>(`/api/accounts/info/me/`, {
+      withCredentials: true,
+    });
 
+    return response.data;
+  },
+
+  // TODO: token 없어도 되는데 무슨 일인지.
   postUserInfo: async (userPostForm: UserPostForm) => {
     const userFormData = new FormData();
     if (userPostForm.photo) {
-      const blob = await fetch(userPostForm.photo).then(r => r.blob());
-      const photoFile = new File([blob], 'image.png', {
-        type: 'image/png',
-      });
-      userFormData.append('photo', photoFile);
+      if (!userPostForm.photo.includes('amazonaws')) {
+        const blob = await fetch(userPostForm.photo).then(r => r.blob());
+        const photoFile = new File([blob], `${userPostForm.username}.png`, {
+          type: 'image/png',
+        });
+        userFormData.append('photo', photoFile);
+      }
     }
 
     if (userPostForm.username) {
@@ -42,10 +52,7 @@ export const api = {
       );
     }
 
-    return await apiClient.post<User>(
-      `/api/user/info/${userPostForm.id}/`,
-      userFormData,
-    );
+    return await apiClient.post<User>(`/api/accounts/info/me/`, userFormData);
   },
 
   // `/api/instrument/`

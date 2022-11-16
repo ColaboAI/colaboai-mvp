@@ -12,6 +12,9 @@ export const LOAD_COVER = asyncActionCreator('LOAD_COVER');
 export const LOAD_SIGNIN = asyncActionCreator('LOAD_SIGNIN');
 export const LOAD_SIGNUP = asyncActionCreator('LOAD_SIGNUP');
 export const LOAD_PROFILE = asyncActionCreator('LOAD_PROFILE');
+export const LOAD_MY_PROFILE = asyncActionCreator('LOAD_MY_PROFILE');
+export const REFRESH_TOKEN = asyncActionCreator('REFRESH_TOKEN');
+
 export const POST_PROFILE = asyncActionCreator('POST_PROFILE');
 export const EDIT_COVER = asyncActionCreator('EDIT_COVER');
 export const DELETE_COVER = asyncActionCreator('DELETE_COVER');
