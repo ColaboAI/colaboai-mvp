@@ -192,14 +192,14 @@ export default function MyProfilePage(props: Props) {
 
         <div className="w-full pt-4 flex flex-col items-center">
           <div className="mt-1 text-sm text-gray-600">
-            If you're ready,please submit your changes !
+            작성을 완료하셨다면, 아래의 버튼을 눌러주세요!
           </div>
           <button
             id="editnameButton"
             className="small-button"
             onClick={onSaveClick}
           >
-            ❗ Submit your Change ❗
+            ❗ 제출하기 ❗
           </button>
         </div>
       </div>
