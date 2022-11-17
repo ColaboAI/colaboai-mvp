@@ -181,16 +181,19 @@ WSGI_APPLICATION = "bandcruit.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-DATABASES = {
-    "default": {
-        "ENGINE": get_secret("DB_ENGINE", "django.db.backends.sqlite3"),
-        "NAME": get_secret("SQL_DATABASE", BASE_DIR / "db.sqlite3"),
-        "USER": get_secret("SQL_USER", "band"),
-        "PASSWORD": get_secret("SQL_PASSWORD", "dlrjsqlalf"),
-        "HOST": get_secret("HOST", "mysql.db"),
-        "PORT": os.environ.get("SQL_PORT", "3306"),
+if get_secret("DATABASES") is not None:
+    DATABASES = get_secret("DATABASES")
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": get_secret("DB_ENGINE", "django.db.backends.sqlite3"),
+            "NAME": get_secret("SQL_DATABASE", BASE_DIR / "db.sqlite3"),
+            "USER": get_secret("SQL_USER", "band"),
+            "PASSWORD": get_secret("SQL_PASSWORD", "dlrjsqlalf"),
+            "HOST": get_secret("HOST", "mysql.db"),
+            "PORT": os.environ.get("SQL_PORT", "3306"),
+        }
     }
-}
 
 
 # Password validation
@@ -315,49 +318,49 @@ REST_AUTH_SERIALIZERS = {
 # ]
 
 # For logging
-from datetime import datetime
+# from datetime import datetime
 
-now = datetime.now()
-str_now = now.strftime("%y%m%d_%H")
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "verbose": {
-            "format": "{asctime} {levelname} {module} {message}",
-            "datefmt": "%Y-%m-%d %H:%M",
-            "style": "{",
-        },
-    },
-    "handlers": {
-        "console": {
-            "level": "INFO",
-            "class": "logging.StreamHandler",
-            "formatter": "verbose",
-        },
-        "debug_log": {
-            "level": "DEBUG",
-            "class": "logging.FileHandler",
-            "filename": f"logs/debug/deb__{str_now}.log",
-            "formatter": "verbose",
-        },
-        "error_log": {
-            "level": "ERROR",
-            "class": "logging.FileHandler",
-            "filename": f"logs/error/err__{str_now}.log",
-            "formatter": "verbose",
-        },
-    },
-    "loggers": {
-        "django": {
-            "handlers": ["console", "debug_log"],
-            "level": "DEBUG",
-            "propagate": True,
-        },
-        "django.request": {
-            "handlers": ["error_log"],
-            "level": "ERROR",
-            "propagate": True,
-        },
-    },
-}
+# now = datetime.now()
+# str_now = now.strftime("%y%m%d_%H")
+# LOGGING = {
+#     "version": 1,
+#     "disable_existing_loggers": False,
+#     "formatters": {
+#         "verbose": {
+#             "format": "{asctime} {levelname} {module} {message}",
+#             "datefmt": "%Y-%m-%d %H:%M",
+#             "style": "{",
+#         },
+#     },
+#     "handlers": {
+#         "console": {
+#             "level": "INFO",
+#             "class": "logging.StreamHandler",
+#             "formatter": "verbose",
+#         },
+#         "debug_log": {
+#             "level": "DEBUG",
+#             "class": "logging.FileHandler",
+#             "filename": f"logs/debug/deb__{str_now}.log",
+#             "formatter": "verbose",
+#         },
+#         "error_log": {
+#             "level": "ERROR",
+#             "class": "logging.FileHandler",
+#             "filename": f"logs/error/err__{str_now}.log",
+#             "formatter": "verbose",
+#         },
+#     },
+#     "loggers": {
+#         "django": {
+#             "handlers": ["console", "debug_log"],
+#             "level": "DEBUG",
+#             "propagate": True,
+#         },
+#         "django.request": {
+#             "handlers": ["error_log"],
+#             "level": "ERROR",
+#             "propagate": True,
+#         },
+#     },
+# }
