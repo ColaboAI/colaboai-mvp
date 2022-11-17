@@ -1,4 +1,4 @@
-django==3.2.6
+django==3.2.16
 coverage==5.3
 pylint==2.6.0
 pylint-django==2.3.0
@@ -16,3 +16,4 @@ djangorestframework-simplejwt==5.2.2
 django-storages==1.13.1
 boto3==1.26.6
 drf-yasg==1.21.4
+psycopg2==2.9.5
