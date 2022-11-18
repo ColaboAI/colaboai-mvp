@@ -23,6 +23,7 @@ from band.serializers import (
     SongCommentSerializer,
     CombinationCommentSerializer,
 )
+from dj_rest_auth.jwt_auth import JWTCookieAuthentication
 
 # pylint: disable=W0613
 # temporarily disable unused-argument, no-self-use warning
@@ -37,6 +38,7 @@ class CoverCommentView(
 
     queryset = CoverComment.objects.none()
     serializer_class = CoverCommentSerializer
+    authentication_classes = (JWTCookieAuthentication,)
 
     def list(self, request: HttpRequest, cover_id: int, **kwargs):
         try:
@@ -79,6 +81,7 @@ class CoverCommentInfoView(
 
     queryset = CoverComment.objects.none()
     serializer_class = CoverCommentSerializer
+    authentication_classes = (JWTCookieAuthentication,)
 
     def get(self, request: HttpRequest, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
@@ -96,6 +99,7 @@ class SongCommentView(
 
     queryset = SongComment.objects.none
     serializer_class = SongCommentSerializer
+    authentication_classes = (JWTCookieAuthentication,)
 
     def list(self, request: HttpRequest, song_id: int, **kwargs):
         try:
@@ -136,6 +140,7 @@ class SongCommentInfoView(
 
     queryset = CoverComment.objects.none()
     serializer_class = CoverCommentSerializer
+    authentication_classes = (JWTCookieAuthentication,)
 
     def get(self, request: HttpRequest, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
@@ -153,6 +158,7 @@ class CombinationCommentView(
 
     queryset = CombinationComment.objects.none()
     serializer_class = CombinationCommentSerializer
+    authentication_classes = (JWTCookieAuthentication,)
 
     def list(self, request: HttpRequest, combination_id: int, **kwargs):
         try:
@@ -199,6 +205,7 @@ class CombinationCommentInfoView(
 
     queryset = CombinationComment.objects.none()
     serializer_class = CombinationCommentSerializer
+    authentication_classes = (JWTCookieAuthentication,)
 
     def get(self, request: HttpRequest, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)

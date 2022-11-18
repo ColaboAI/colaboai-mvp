@@ -33,7 +33,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import UserFollowing
-from .serializers import UserFollowingSerializer, UserProfileSerializer, UserSerializer
+from .serializers import UserFollowingSerializer, UserProfileSerializer
+from dj_rest_auth.jwt_auth import JWTCookieAuthentication
 
 """
 TODO:
@@ -54,6 +55,7 @@ class UserFollowingView(mixins.ListModelMixin, generics.GenericAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = UserFollowingSerializer
     queryset = UserFollowing.objects.all()
+    authentication_classes = (JWTCookieAuthentication,)
 
     def get(self, request: Request, *args, **kwargs) -> Response:
         try:
@@ -441,6 +443,7 @@ class MyInfo(
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
     serializer_class = UserProfileSerializer
+    authentication_classes = (JWTCookieAuthentication,)
 
     def get_object(self):
         return self.request.user

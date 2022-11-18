@@ -28,6 +28,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/accounts/", include("user.urls")),
     path("api/", include("band.urls")),
+    # path("__debug__/", include("debug_toolbar.urls")),
 ]
 if get_secret("USE_S3") != "True":
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
