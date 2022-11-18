@@ -1,5 +1,12 @@
 import { apiClient } from './client';
 export const api = {
+  // Token
+  getAccessTokenFromRefreshToken: async () => {
+    const res = await apiClient.post<AccessToken>(
+      '/api/accounts/token/refresh/',
+    );
+    return res.data;
+  },
   // users
   signup: async (form: SignUpForm) => {
     return await apiClient.post<null>(`/api/accounts/registration/`, form);
@@ -19,9 +26,7 @@ export const api = {
     return response.data;
   },
   getMyInfo: async () => {
-    const response = await apiClient.get<User>(`/api/accounts/info/me/`, {
-      withCredentials: true,
-    });
+    const response = await apiClient.get<User>(`/api/accounts/info/me/`);
 
     return response.data;
   },
