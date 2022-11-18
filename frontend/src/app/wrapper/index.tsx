@@ -21,10 +21,17 @@ export default function Wrapper(props: Props) {
   const dispatch = useDispatch();
   const wrapperState = useSelector(selectWrapper);
 
-  const user = wrapperState.user;
   const currentTrack = wrapperState.currentTrack;
 
   const player = React.useMemo(() => Player.getInstance(), []);
+
+  // TODO: 로직 제대로 수정하기
+  useEffect(() => {
+    if (!wrapperState.accessToken) {
+      dispatch(apiActions.loadAccessTokenFromRefreshToken.request());
+      dispatch(apiActions.loadMyProfile.request());
+    }
+  }, [dispatch, wrapperState.accessToken]);
 
   useEffect(() => {
     player.pause();
@@ -72,7 +79,6 @@ export default function Wrapper(props: Props) {
   const onLikeClicked = useCallback(
     (track: TrackInfo) => {
       if (track.combinationId) {
-        console.log('track', track.combinationId);
         dispatch(
           apiActions.editCombinationLike.request({
             combinationId: track.combinationId,
@@ -90,7 +96,7 @@ export default function Wrapper(props: Props) {
   return (
     <div data-testid="Wrapper" className="relative w-full h-full">
       <Header
-        user={user}
+        accessToken={wrapperState.accessToken}
         onSearchClicked={onSearchClicked}
         onSignInClicked={onSignInClicked}
         onSignUpClicked={onSignUpClicked}

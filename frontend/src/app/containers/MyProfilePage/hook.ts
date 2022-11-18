@@ -8,6 +8,7 @@ import { selectWrapper } from 'app/wrapper/slice/selectors';
 import * as urls from 'utils/urls';
 import { Props } from '.';
 import { Crop } from 'react-image-crop';
+import toast from 'react-hot-toast';
 
 const initForm: UserPostForm = {
   id: -1,
@@ -53,34 +54,29 @@ export const useMyProfile = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (!wrapperState.user) {
-      alert('You have to login to see profile page');
+    if (!wrapperState.accessToken) {
+      toast.error('로그인 정보를 찾을 수 없습니다.');
       history.replace(urls.Main());
     } else if (!profileResponse.loading) {
       if (profileResponse.error) {
-        alert('Failed to load profile data');
+        toast.error('프로필 정보를 불러오는데 실패했습니다.');
         history.replace(urls.Main());
       } else if (profileResponse.data) {
         const user = profileResponse.data;
-        if (user.id !== wrapperState.user.id) {
-          alert('You cannot edit this cover');
-          history.replace(urls.Main());
-        } else {
-          setForm({
-            id: user.id,
-            username: user.username,
-            description: user.description,
-            // photo: user.photo,
-            instruments: user.instruments.map(instrument => instrument.id),
-          });
-          setPhoto(user.photo);
-          setCheckList(user.instruments.map(instrument => instrument.id));
-        }
+        setForm({
+          id: user.id,
+          username: user.username,
+          description: user.description,
+          // photo: user.photo,
+          instruments: user.instruments.map(instrument => instrument.id),
+        });
+        setPhoto(user.photo);
+        setCheckList(user.instruments.map(instrument => instrument.id));
       } else {
         if (wrapperState.accessToken) {
           dispatch(apiActions.loadMyProfile.request());
         } else {
-          dispatch(apiActions.refreshToken.request());
+          dispatch(apiActions.loadAccessTokenFromRefreshToken.request());
         }
       }
     }
@@ -96,9 +92,9 @@ export const useMyProfile = () => {
   useEffect(() => {
     if (!postProfileResponse.loading) {
       if (postProfileResponse.error) {
-        alert('Failed to save' + postProfileResponse.error);
+        toast.success('저장에 실패하였습니다\n' + postProfileResponse.error);
       } else if (postProfileResponse.data) {
-        alert('saved');
+        toast.success('저장되었습니다.');
         history.replace(urls.Main());
       }
     }
@@ -165,7 +161,7 @@ export const useProfile = (props: Props) => {
   useEffect(() => {
     if (!profileResponse.loading) {
       if (profileResponse.error) {
-        alert('Failed to load profile data');
+        toast.success('프로필 정보를 불러오는데 실패했습니다.');
         history.replace(urls.Main());
       } else if (profileResponse.data) {
         const user = profileResponse.data;
