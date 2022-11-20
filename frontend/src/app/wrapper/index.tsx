@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 
@@ -16,7 +16,6 @@ interface WrapperProps {
   children?: React.ReactChild | React.ReactChild[];
 }
 export default function Wrapper(props: WrapperProps) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   useWrapperSlice();
   const history = useHistory();
   const location = useLocation();
