@@ -19,6 +19,7 @@ const stubState = {
   wrapper: {
     name: 'wrapper',
     user: dummyCovers[1].user,
+    auth: { loading: false },
   },
 };
 
@@ -140,7 +141,7 @@ it('Edit possible', async () => {
 it('no user', () => {
   const { page } = setup({
     ...stubState,
-    wrapper: {},
+    wrapper: { auth: { loading: false } },
   });
   render(page);
 

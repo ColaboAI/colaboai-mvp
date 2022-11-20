@@ -53,8 +53,9 @@ test('setUser', () => {
     refreshToken: 'dummyRefreshToken',
   };
 
-  const stateInit: WrapperState = {};
+  const stateInit: WrapperState = { auth: { loading: false } };
   const stateChanged: WrapperState = {
+    ...stateInit,
     user: dummyUserInfo,
   };
 
@@ -67,8 +68,9 @@ test('setUser', () => {
 });
 
 test('setCurrentPlaying', () => {
-  const stateInit: WrapperState = {};
+  const stateInit: WrapperState = { auth: { loading: false } };
   const stateChanged: WrapperState = {
+    ...stateInit,
     currentTrack: dummyTrackInfos[0],
   };
 

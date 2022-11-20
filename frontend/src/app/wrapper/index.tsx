@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 
@@ -10,6 +10,7 @@ import { useWrapperSlice, wrapperActions } from './slice';
 import * as apiActions from 'api/actions';
 import * as url from 'utils/urls';
 import Player from 'app/helper/Player';
+import toast from 'react-hot-toast';
 interface Props {
   children?: React.ReactChild | React.ReactChild[];
 }
@@ -27,11 +28,23 @@ export default function Wrapper(props: Props) {
 
   // TODO: 로직 제대로 수정하기
   useEffect(() => {
-    if (!wrapperState.accessToken) {
-      dispatch(apiActions.loadAccessTokenFromRefreshToken.request());
-      dispatch(apiActions.loadMyProfile.request());
+    const at = sessionStorage.getItem('accessToken') ?? undefined;
+    const isLogout = localStorage.getItem('isLogout') ?? undefined;
+    if (at) {
+      dispatch(wrapperActions.setAccessToken(at));
+    } else if (isLogout === 'true') {
+      toast.error('로그인이 필요합니다.');
+      history.replace(url.SignIn());
+    } else {
+      dispatch(apiActions.loadMyProfileInAuth.request());
     }
-  }, [dispatch, wrapperState.accessToken]);
+  }, [dispatch, history]);
+
+  useEffect(() => {
+    if (wrapperState.auth.error) {
+      history.push(url.SignIn());
+    }
+  }, [history, wrapperState.auth.error]);
 
   useEffect(() => {
     player.pause();
@@ -62,7 +75,7 @@ export default function Wrapper(props: Props) {
 
   const onSignOutClicked = useCallback(() => {
     dispatch(wrapperActions.signOut());
-    history.replace(url.Main());
+    history.replace(url.SignIn());
   }, [dispatch, history]);
 
   const onProfileClicked = useCallback(() => {

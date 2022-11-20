@@ -3,7 +3,7 @@ import * as React from 'react';
 import { ReactComponent as Logo } from 'res/logo.svg';
 
 interface Props {
-  accessToken?: string;
+  accessToken?: string | null;
   onSearchClicked?: (key: string) => void;
   onSignInClicked: () => void;
   onSignUpClicked: () => void;

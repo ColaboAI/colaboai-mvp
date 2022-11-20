@@ -6,11 +6,13 @@ import { useInjectReducer, useInjectSaga } from 'utils/redux-injectors';
 import wrapperSaga from './saga';
 import { setAuthTokenHeader } from 'api/band/client';
 import { AxiosError } from 'axios';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 /* --- STATE --- */
 export interface WrapperState {
   user?: UserInfo;
   currentTrack?: TrackInfo;
-  auth?: AsyncStateType<User>;
+  auth: AsyncStateType<User>;
   accessToken?: string;
 } // state 형식 정의
 
@@ -26,39 +28,30 @@ const slice = createSlice({
   reducers: {
     setUser(state, action: PayloadAction<UserLoginResponse>) {
       state.user = action.payload.user;
-      if (action.payload.accessToken) {
+      if (!state.accessToken) {
         state.accessToken = action.payload.accessToken;
-        setAuthTokenHeader(action.payload.accessToken);
       }
+      sessionStorage.setItem('accessToken', action.payload.accessToken);
     },
-    setAccessToken(state, action: PayloadAction<string>) {
+
+    setAccessToken(state, action: PayloadAction<string | undefined>) {
       state.accessToken = action.payload;
-      setAuthTokenHeader(action.payload);
+      localStorage.setItem('isLogout', 'false');
     },
+
     setCurrentPlaying(state, action: PayloadAction<TrackInfo>) {
       state.currentTrack = action.payload;
       return state;
     },
     signOut(state, action: PayloadAction<undefined>) {
       api.signout();
-      state.accessToken = undefined;
       state.user = undefined;
-      setAuthTokenHeader('');
-    },
-    loadingAccessTokenResponse(state, action: PayloadAction<any>) {
-      state.accessToken = undefined;
-      state.auth = { loading: true };
-    },
-    successAccessTokenResponse(state, action: PayloadAction<AccessToken>) {
       state.auth = { loading: false };
-      state.accessToken = action.payload.access;
-      setAuthTokenHeader(action.payload.access);
-    },
-    errorAccessTokenResponse(state, action: PayloadAction<AxiosError>) {
       state.accessToken = undefined;
-      state.auth = { loading: false };
-      state.auth.error = action.payload;
+      localStorage.setItem('isLogout', 'true');
+      sessionStorage.clear();
     },
+
     loadingMyProfileResponse(state, action: PayloadAction<any>) {
       state.auth = { loading: true };
     },
@@ -71,17 +64,26 @@ const slice = createSlice({
       state.auth = { loading: false };
       state.auth.error = action.payload;
     },
+    cleanUp(state, action: PayloadAction<undefined>) {
+      state = initialState;
+    },
   },
 });
 
 export const { actions: wrapperActions, reducer } = slice;
 
 export const useWrapperSlice = () => {
+  const dispatch = useDispatch();
   useInjectReducer({ key: slice.name, reducer: slice.reducer });
   useInjectSaga({
     key: slice.name,
     saga: wrapperSaga,
     mode: SagaInjectionModes.RESTART_ON_REMOUNT,
   });
+  useEffect(() => {
+    return () => {
+      dispatch(slice.actions.cleanUp());
+    };
+  }, [dispatch]);
   return { actions: slice.actions, reducer: slice.reducer };
 };

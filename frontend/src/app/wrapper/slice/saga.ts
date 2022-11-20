@@ -1,4 +1,4 @@
-import { delay, put, takeLatest } from 'redux-saga/effects';
+import { put, takeLatest } from 'redux-saga/effects';
 import { ActionType } from 'typesafe-actions';
 import * as AT from 'api/actionTypes';
 import * as actions from 'api/actions';
@@ -8,11 +8,7 @@ import { wrapperActions } from '.';
 // Root saga
 export default function* wrapperSaga() {
   yield takeLatest(AT.EDIT_COMBINATION_LIKE.REQUEST, putCombinationLikeRequest);
-  yield takeLatest(
-    AT.LOAD_ACCESS_TOKEN_FROM_REFRESH_TOKEN.REQUEST,
-    getAccessTokenFromRefreshTokenRequest,
-  );
-  yield takeLatest(AT.LOAD_MY_PROFILE.REQUEST, getMyProfileRequest);
+  yield takeLatest(AT.LOAD_MY_PROFILE_IN_AUTH.REQUEST, getMyProfileRequest);
 }
 // TODO: 구현 마무리
 export function* putCombinationLikeRequest(
@@ -23,27 +19,11 @@ export function* putCombinationLikeRequest(
   } catch (e: any) {}
 }
 
-export function* getAccessTokenFromRefreshTokenRequest(
-  action: ActionType<typeof actions.loadAccessTokenFromRefreshToken.request>,
-) {
-  try {
-    yield put(wrapperActions.loadingAccessTokenResponse('start load'));
-    const response = yield api.getAccessTokenFromRefreshToken();
-    yield put(wrapperActions.successAccessTokenResponse(response));
-  } catch (e: any) {
-    yield put(wrapperActions.errorAccessTokenResponse(e));
-  }
-}
-
-export function* getMyProfileRequest(
-  action: ActionType<typeof actions.loadMyProfile.request>,
-) {
+export function* getMyProfileRequest() {
   try {
     yield put(wrapperActions.loadingMyProfileResponse('start load'));
-    // TODO: remove delay
-    yield delay(500);
-    const response = yield api.getMyInfo();
-    yield put(wrapperActions.successMyProfileResponse(response));
+    const response2 = yield api.getMyInfo();
+    yield put(wrapperActions.successMyProfileResponse(response2));
   } catch (e: any) {
     yield put(wrapperActions.errorMyProfileResponse(e));
   }

@@ -13,6 +13,9 @@ export const LOAD_SIGNIN = asyncActionCreator('LOAD_SIGNIN');
 export const LOAD_SIGNUP = asyncActionCreator('LOAD_SIGNUP');
 export const LOAD_PROFILE = asyncActionCreator('LOAD_PROFILE');
 export const LOAD_MY_PROFILE = asyncActionCreator('LOAD_MY_PROFILE');
+export const LOAD_MY_PROFILE_IN_AUTH = asyncActionCreator(
+  'LOAD_MY_PROFILE_IN_AUTH',
+);
 export const LOAD_ACCESS_TOKEN_FROM_REFRESH_TOKEN = asyncActionCreator(
   'LOAD_ACCESS_TOKEN_FROM_REFRESH_TOKEN',
 );

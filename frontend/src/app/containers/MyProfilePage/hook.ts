@@ -10,13 +10,15 @@ import { Props } from '.';
 import { Crop } from 'react-image-crop';
 import toast from 'react-hot-toast';
 
+const loading = 'Loading';
 const initForm: UserPostForm = {
   id: -1,
-  username: 'Your ID',
-  description: 'Your Description',
+  username: loading,
+  description: loading,
   photo: '',
   instruments: [],
 };
+
 const initUser: User = {
   id: -1,
   username: 'Your ID',
@@ -48,19 +50,17 @@ export const useMyProfile = () => {
   // handle initial state
   useEffect(() => {
     dispatch(apiActions.loadInstruments.request());
+    dispatch(apiActions.loadMyProfile.request());
+
     return () => {
       dispatch(profileActions.clearRedux());
     };
   }, [dispatch]);
 
   useEffect(() => {
-    if (!wrapperState.accessToken) {
-      toast.error('로그인 정보를 찾을 수 없습니다.');
-      history.replace(urls.Main());
-    } else if (!profileResponse.loading) {
+    if (wrapperState.accessToken) {
       if (profileResponse.error) {
-        toast.error('프로필 정보를 불러오는데 실패했습니다.');
-        history.replace(urls.Main());
+        toast.error(profileResponse.error);
       } else if (profileResponse.data) {
         const user = profileResponse.data;
         setForm({
@@ -72,19 +72,15 @@ export const useMyProfile = () => {
         });
         setPhoto(user.photo);
         setCheckList(user.instruments.map(instrument => instrument.id));
-      } else {
-        if (wrapperState.accessToken) {
-          dispatch(apiActions.loadMyProfile.request());
-        } else {
-          dispatch(apiActions.loadAccessTokenFromRefreshToken.request());
-        }
       }
+    } else if (!profileResponse.loading) {
+      dispatch(apiActions.loadMyProfile.request());
     }
   }, [
-    profileResponse,
     dispatch,
-    history,
-    wrapperState.user,
+    profileResponse.data,
+    profileResponse.error,
+    profileResponse.loading,
     wrapperState.accessToken,
   ]);
 
@@ -153,6 +149,7 @@ export const useProfile = (props: Props) => {
   useEffect(() => {
     dispatch(apiActions.loadInstruments.request());
     dispatch(apiActions.loadProfile.request(Number(props.match.params.id)));
+    dispatch(apiActions.loadMyProfileInAuth.request());
     return () => {
       dispatch(profileActions.clearRedux());
     };
@@ -161,7 +158,7 @@ export const useProfile = (props: Props) => {
   useEffect(() => {
     if (!profileResponse.loading) {
       if (profileResponse.error) {
-        toast.success('프로필 정보를 불러오는데 실패했습니다.');
+        toast.error('프로필 정보를 불러오는데 실패했습니다.');
         history.replace(urls.Main());
       } else if (profileResponse.data) {
         const user = profileResponse.data;
@@ -174,9 +171,8 @@ export const useProfile = (props: Props) => {
           follower: user.follower,
           following: user.following,
         });
-        // setPhoto(user.photo);
-
-        if (wrapperState.user && user.id === wrapperState.user.id) {
+        // TODO: 프로필 수정 페이지로 표현?
+        if (wrapperState.auth.data && user.id === wrapperState.auth.data.id) {
           history.replace(urls.Profile('me'));
         }
       }
@@ -188,6 +184,7 @@ export const useProfile = (props: Props) => {
     history,
     props.match.params.id,
     wrapperState.user,
+    wrapperState.auth.data,
   ]);
 
   return { form };
