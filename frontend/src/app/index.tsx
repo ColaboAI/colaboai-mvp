@@ -27,6 +27,7 @@ import CoverEditPage from './containers/CoverEditPage';
 import MyProfilePage from './containers/MyProfilePage';
 
 import * as url from 'utils/urls';
+import AuthProvider from 'api/band/client';
 
 export function App() {
   return (
@@ -71,6 +72,7 @@ export function App() {
           </Switch>
         </Wrapper>
         <Toaster position="top-center" />
+        <AuthProvider />
       </div>
     </BrowserRouter>
   );

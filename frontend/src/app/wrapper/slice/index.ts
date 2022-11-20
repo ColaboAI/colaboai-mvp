@@ -4,7 +4,6 @@ import { SagaInjectionModes } from 'redux-injectors';
 import { createSlice } from 'utils/@reduxjs/toolkit';
 import { useInjectReducer, useInjectSaga } from 'utils/redux-injectors';
 import wrapperSaga from './saga';
-import { setAuthTokenHeader } from 'api/band/client';
 import { AxiosError } from 'axios';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';

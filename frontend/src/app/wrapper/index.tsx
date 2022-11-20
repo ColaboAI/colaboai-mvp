@@ -32,6 +32,9 @@ export default function Wrapper(props: Props) {
     const isLogout = localStorage.getItem('isLogout') ?? undefined;
     if (at) {
       dispatch(wrapperActions.setAccessToken(at));
+      if (wrapperState.user === undefined) {
+        dispatch(apiActions.loadMyProfileInAuth.request());
+      }
     } else if (isLogout === 'true') {
       toast.error('로그인이 필요합니다.');
       history.replace(url.SignIn());
