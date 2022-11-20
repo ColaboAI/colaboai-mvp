@@ -10,15 +10,16 @@ import { useWrapperSlice, wrapperActions } from './slice';
 import * as apiActions from 'api/actions';
 import * as url from 'utils/urls';
 import Player from 'app/helper/Player';
-import toast from 'react-hot-toast';
-interface Props {
+import { useLocation } from 'react-router-dom';
+
+interface WrapperProps {
   children?: React.ReactChild | React.ReactChild[];
 }
-
-export default function Wrapper(props: Props) {
+export default function Wrapper(props: WrapperProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   useWrapperSlice();
   const history = useHistory();
+  const location = useLocation();
   const dispatch = useDispatch();
   const wrapperState = useSelector(selectWrapper);
 
@@ -30,18 +31,21 @@ export default function Wrapper(props: Props) {
   useEffect(() => {
     const at = sessionStorage.getItem('accessToken') ?? undefined;
     const isLogout = localStorage.getItem('isLogout') ?? undefined;
+    if (location && location.pathname === '/signup') {
+      return;
+    }
     if (at) {
       dispatch(wrapperActions.setAccessToken(at));
       if (wrapperState.user === undefined) {
         dispatch(apiActions.loadMyProfileInAuth.request());
       }
     } else if (isLogout === 'true') {
-      toast.error('로그인이 필요합니다.');
       history.replace(url.SignIn());
     } else {
       dispatch(apiActions.loadMyProfileInAuth.request());
     }
-  }, [dispatch, history]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, history, wrapperState.user]);
 
   useEffect(() => {
     if (wrapperState.auth.error) {
