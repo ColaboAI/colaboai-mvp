@@ -4,9 +4,10 @@ TODO ("implement")
 """
 from django.http.request import HttpRequest
 from rest_framework import mixins, generics, filters
-
+from dj_rest_auth.jwt_auth import JWTCookieAuthentication
 from band.models import Song
 from band.serializers import SongSerializer
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 # pylint: disable=W0613
 # temporarily disable unused-argument, no-self-use warning
@@ -17,6 +18,7 @@ class SongView(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericA
 
     queryset = Song.objects.all()
     serializer_class = SongSerializer
+    authentication_classes = (JWTCookieAuthentication,)
 
     def get(self, request: HttpRequest):
         return self.list(request)
@@ -44,6 +46,7 @@ class SongInfo(
 
     queryset = Song.objects.all()
     serializer_class = SongSerializer
+    authentication_classes = (JWTCookieAuthentication,)
 
     def get(self, request: HttpRequest, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)

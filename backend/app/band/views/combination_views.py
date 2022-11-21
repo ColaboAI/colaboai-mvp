@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import mixins, generics, status
 from rest_framework.permissions import AllowAny
+from dj_rest_auth.jwt_auth import JWTCookieAuthentication
 
 from band.models import Combination, Song, CombinationLog, RecoSong
 from band.serializers import CombinationSerializer, CombinationLikeSerializer
@@ -135,6 +136,7 @@ class CombinationLike(generics.GenericAPIView):
 
     queryset = Combination.objects.all()
     serializer_class = CombinationLikeSerializer
+    authentication_classes = [JWTCookieAuthentication]
 
     def get(self, request: HttpRequest, *args, **kwargs):
         instance: Combination = self.get_object()
