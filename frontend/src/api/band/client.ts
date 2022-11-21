@@ -2,6 +2,7 @@ import { wrapperActions } from 'app/wrapper/slice';
 import axios from 'axios';
 import applyCaseMiddleware from 'axios-case-converter';
 import { useCallback, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
@@ -45,8 +46,11 @@ export default function AuthProvider() {
   apiClient.interceptors.request.use(
     async (config: any) => {
       const originalRequest = config;
-      const tokenData = sessionStorage.getItem('accessToken') ?? '';
-      originalRequest.headers['Authorization'] = `Bearer ${tokenData}`;
+      const tokenData = sessionStorage.getItem('accessToken');
+      if (tokenData) {
+        originalRequest.headers['Authorization'] = `Bearer ${tokenData}`;
+      }
+
       return config;
     },
     error => Promise.reject(error),
@@ -60,6 +64,8 @@ export default function AuthProvider() {
         response: { status },
       } = error;
       const originalRequest = config;
+      const isAnonymous = sessionStorage.getItem('isAnonymous') === 'true';
+      const isLogout = sessionStorage.getItem('isLogout') === 'true';
       if (config.url === REFRESH_URL || status !== 401) {
         return Promise.reject(error);
       }
@@ -72,10 +78,9 @@ export default function AuthProvider() {
         });
       });
 
-      if (status === 401) {
+      if (status === 401 && !isLogout && !isAnonymous) {
         if (!isTokenRefreshing) {
           // isTokenRefreshing이 false인 경우에만 token refresh 요청
-          console.log('error handler');
           setIsTokenRefreshing(true);
           try {
             const response = await apiClient.post<AccessToken>(
@@ -90,7 +95,17 @@ export default function AuthProvider() {
             onTokenRefreshed(newAccessToken);
           } catch (err) {
             dispatch(wrapperActions.cleanUp());
-            history.replace('/signin');
+            const isLogout = sessionStorage.getItem('isLogout');
+            if (isLogout === 'false') {
+              toast.error(
+                '로그인 인증 정보가 만료되었습니다. 다시 로그인해주세요.',
+              );
+              history.push('/signin');
+            } else {
+              sessionStorage.removeItem('accessToken');
+              sessionStorage.removeItem('isLogout');
+              sessionStorage.setItem('isAnonymous', 'true');
+            }
           }
         }
 

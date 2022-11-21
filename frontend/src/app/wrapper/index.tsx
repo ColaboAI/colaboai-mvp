@@ -30,6 +30,7 @@ export default function Wrapper(props: WrapperProps) {
   useEffect(() => {
     const at = sessionStorage.getItem('accessToken') ?? undefined;
     const isLogout = localStorage.getItem('isLogout') ?? undefined;
+    const isAnonymous = localStorage.getItem('isAnonymous') ?? undefined;
     if (location && location.pathname === '/signup') {
       return;
     }
@@ -38,10 +39,10 @@ export default function Wrapper(props: WrapperProps) {
       if (wrapperState.user === undefined) {
         dispatch(apiActions.loadMyProfileInAuth.request());
       }
-    } else if (isLogout === 'true') {
-      history.replace(url.SignIn());
     } else {
-      dispatch(apiActions.loadMyProfileInAuth.request());
+      if (isLogout !== 'true' && isAnonymous !== 'true') {
+        dispatch(apiActions.loadMyProfileInAuth.request());
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, history, wrapperState.user]);
