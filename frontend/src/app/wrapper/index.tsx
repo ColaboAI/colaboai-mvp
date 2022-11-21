@@ -21,7 +21,6 @@ export default function Wrapper(props: WrapperProps) {
   const location = useLocation();
   const dispatch = useDispatch();
   const wrapperState = useSelector(selectWrapper);
-
   const currentTrack = wrapperState.currentTrack;
 
   const player = React.useMemo(() => Player.getInstance(), []);
@@ -123,6 +122,9 @@ export default function Wrapper(props: WrapperProps) {
         onSignOutClicked={onSignOutClicked}
         onProfileClicked={onProfileClicked}
         onLogoClicked={onLogoClicked}
+        onCommunityClicked={() => {
+          window.open('https://discord.gg/XCSuNDNUyX', '_blank');
+        }}
       />
       <div className="relative pt-16 pb-16 h-full overflow-y-auto">
         {props.children}
