@@ -133,3 +133,5 @@ server/keyfile.json
 .vscode
 
 model.pth
+
+frontend/.env.*

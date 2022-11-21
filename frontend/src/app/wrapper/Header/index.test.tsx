@@ -21,6 +21,9 @@ test('should render', () => {
       onLogoClicked={function (): void {
         throw new Error('Function not implemented.');
       }}
+      onCommunityClicked={function (): void {
+        throw new Error('Function not implemented.');
+      }}
     />,
   );
   expect(screen.getByTestId('Header')).toBeTruthy();

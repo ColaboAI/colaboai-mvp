@@ -10,13 +10,15 @@ interface Props {
   onSignOutClicked: () => void;
   onProfileClicked: () => void;
   onLogoClicked: () => void;
+  onCommunityClicked: () => void;
 }
 
 export default function Header(props: Props) {
-  const signInText = 'Sign In';
-  const signUpText = 'Sign Up';
-  const signOutText = 'Sign Out';
-  const profileText = 'Profile';
+  const signInText = '로그인';
+  const signUpText = '회원가입';
+  const signOutText = '로그아웃';
+  const profileText = '나의 프로필';
+  const communityText = '커뮤니티';
 
   const styles = {
     button:
@@ -55,6 +57,13 @@ export default function Header(props: Props) {
           >
             {profileText}
           </button>
+          <button
+            id="community_button"
+            onClick={props.onCommunityClicked}
+            className={styles.button}
+          >
+            {communityText}
+          </button>
         </div>
       ) : (
         /* when not logged in  */
@@ -72,6 +81,13 @@ export default function Header(props: Props) {
             className={styles.button}
           >
             {signUpText}
+          </button>
+          <button
+            id="community_button"
+            onClick={props.onCommunityClicked}
+            className={styles.button}
+          >
+            {communityText}
           </button>
         </div>
       )}

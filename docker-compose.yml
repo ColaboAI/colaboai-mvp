@@ -18,9 +18,7 @@ services:
     container_name: backend
     ports:
       - 8000:8000
-    command: uwsgi --wsgi-file bandcruit/wsgi.py --http 0.0.0.0:8000
-    env_file:
-      - ./.env
+    command: gunicorn --bind 0.0.0.0:8000 bandcruit.wsgi:application
     volumes:
       - ./backend/:/srv/
     restart: always
