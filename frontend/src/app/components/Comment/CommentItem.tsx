@@ -84,6 +84,7 @@ function CommentItem({
           <ReplyCommentItem
             commentText={r.content}
             id={r.id}
+            key={`${id}_reply_${r.id}`}
             avatarUrl={r.user.photo ?? ''}
             name={r.user.username}
             userId={r.user.id}
