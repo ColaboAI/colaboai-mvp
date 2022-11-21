@@ -8,13 +8,13 @@ import { ActionType } from 'typesafe-actions';
 // TODO: 일반 유저의 프로필을 불러오는 액션
 // Root saga
 export default function* profilePageSaga(payload: any) {
-  yield takeEvery(AT.LOAD_PROFILE.REQUEST, getProfileResponse);
-  yield takeEvery(AT.POST_PROFILE.REQUEST, postProfileResponse);
+  yield takeEvery(AT.LOAD_PROFILE.REQUEST, getProfileRequest);
+  yield takeEvery(AT.POST_PROFILE.REQUEST, postProfileRequest);
   yield takeEvery(AT.LOAD_INSTRUMENTS.REQUEST, getInstrumentsRequest);
-  yield takeEvery(AT.LOAD_MY_PROFILE.REQUEST, getMyProfileResponse);
+  yield takeEvery(AT.LOAD_MY_PROFILE.REQUEST, getMyProfileRequest);
 }
 
-export function* getMyProfileResponse(
+export function* getMyProfileRequest(
   action: ActionType<typeof actions.loadMyProfile.request>,
 ) {
   yield put(profileActions.loadingProfileResponse('start load'));
@@ -26,7 +26,7 @@ export function* getMyProfileResponse(
   }
 }
 
-export function* getProfileResponse(
+export function* getProfileRequest(
   action: ActionType<typeof actions.loadProfile.request>,
 ) {
   yield put(profileActions.loadingProfileResponse('start load'));
@@ -38,7 +38,7 @@ export function* getProfileResponse(
   }
 }
 
-export function* postProfileResponse(
+export function* postProfileRequest(
   action: ActionType<typeof actions.postProfile.request>,
 ) {
   yield put(profileActions.loadingPostResponse('start load'));

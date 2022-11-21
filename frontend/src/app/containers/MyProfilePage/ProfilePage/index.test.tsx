@@ -17,6 +17,7 @@ const stubState = {
   wrapper: {
     name: 'wrapper',
     user: dummyUser[0],
+    auth: { loading: false },
   },
 };
 

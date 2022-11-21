@@ -82,17 +82,6 @@ interface SongForm {
   description: string;
 }
 
-interface User {
-  id: number;
-  username: string;
-  // email: string;
-  description: string;
-  photo: string;
-  following: number;
-  follower: number;
-  instruments: Instrument[];
-}
-
 interface UserPostForm {
   id: number;
   username: string;
@@ -108,6 +97,15 @@ type UserInfo = {
   following: number;
   follower: number;
 };
+interface User extends UserInfo {
+  photo: string;
+  description: string;
+  instruments: Instrument[];
+}
+
+interface UserInfoWithToken {
+  accessToken: string;
+}
 
 type UserLoginResponse = {
   user: UserInfo;
@@ -187,4 +185,14 @@ interface SongCommentForm extends CommentFormBase {
 interface DeleteCommentForm {
   commentId: number;
   parentObjectId: number;
+}
+
+interface AccessToken {
+  access: string;
+  accessTokenExpiration: string;
+}
+
+interface RefreshToken {
+  refresh: string;
+  refreshTokenExpiration: string;
 }

@@ -81,6 +81,7 @@ INSTALLED_APPS = [
     "user",
     "dj_rest_auth",
     "dj_rest_auth.registration",
+    "rest_framework_simplejwt",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
@@ -91,6 +92,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.naver",
     "storages",  # for S3, django-storages
     "drf_yasg",  # swagger
+    # "debug_toolbar",
 ]
 
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"  # Default
@@ -137,13 +139,17 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
+    # "debug_toolbar.middleware.DebugToolbarMiddleware",
+]
+INTERNAL_IPS = [
+    "127.0.0.1",
 ]
 
 ROOT_URLCONF = "bandcruit.urls"
@@ -153,12 +159,16 @@ CSRF_TRUSTED_ORIGINS = [
     "colabo.ml/*",
     "http://localhost",
     "colabo.ml",
+    "localhost",
 ]
 CORS_ORIGIN_WHITELIST = [
     "https://www.colabo.ml",
     "https://colabo.ml",
     "http://localhost",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
 ]
+CORS_ALLOW_CREDENTIALS = True
 
 TEMPLATES = [
     {
@@ -276,10 +286,9 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticatedOrReadOnly"
     ],
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.TokenAuthentication",
+    "DEFAULT_AUTHENTICATION_CLASSES": [
         "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
-    ),
+    ],
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
     # "TEST_REQUEST_DEFAULT_FORMAT": "json",
 }
@@ -290,14 +299,13 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "AUTH_HEADER_TYPES": ("Bearer",),
-    "AUTH_HEADER_NAME": "Authorization",
+    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
 }
 # TODO: uncomment this in production
 # JWT_AUTH_SECURE = True
 REST_USE_JWT = True
-REST_SESSION_LOGIN = True
+REST_SESSION_LOGIN = False
 JWT_AUTH_HTTPONLY = True
-# JWT_AUTH_COOKIE = "colaboai-auth"
 JWT_AUTH_REFRESH_COOKIE = "colaboai-refresh-token"
 
 # For https header
@@ -309,58 +317,9 @@ REST_AUTH_SERIALIZERS = {
 }
 
 # TODO: 회원가입시 refresh 토큰 반환되는것 수정하기.
-
-# AUTHENTICATION_BACKENDS = [
-#     # allauth specific authentication methods, such as login by e-mail
-#     "allauth.account.auth_backends.AuthenticationBackend",
-#     # Needed to login by username in Django admin, regardless of allauth
-#     "django.contrib.auth.backends.ModelBackend",
-# ]
-
-# For logging
-# from datetime import datetime
-
-# now = datetime.now()
-# str_now = now.strftime("%y%m%d_%H")
-# LOGGING = {
-#     "version": 1,
-#     "disable_existing_loggers": False,
-#     "formatters": {
-#         "verbose": {
-#             "format": "{asctime} {levelname} {module} {message}",
-#             "datefmt": "%Y-%m-%d %H:%M",
-#             "style": "{",
-#         },
-#     },
-#     "handlers": {
-#         "console": {
-#             "level": "INFO",
-#             "class": "logging.StreamHandler",
-#             "formatter": "verbose",
-#         },
-#         "debug_log": {
-#             "level": "DEBUG",
-#             "class": "logging.FileHandler",
-#             "filename": f"logs/debug/deb__{str_now}.log",
-#             "formatter": "verbose",
-#         },
-#         "error_log": {
-#             "level": "ERROR",
-#             "class": "logging.FileHandler",
-#             "filename": f"logs/error/err__{str_now}.log",
-#             "formatter": "verbose",
-#         },
-#     },
-#     "loggers": {
-#         "django": {
-#             "handlers": ["console", "debug_log"],
-#             "level": "DEBUG",
-#             "propagate": True,
-#         },
-#         "django.request": {
-#             "handlers": ["error_log"],
-#             "level": "ERROR",
-#             "propagate": True,
-#         },
-#     },
-# }
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    "django.contrib.auth.backends.ModelBackend",
+    # `allauth` specific authentication methods, such as login by e-mail
+    "allauth.account.auth_backends.AuthenticationBackend",
+)

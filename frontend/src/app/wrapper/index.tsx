@@ -10,21 +10,48 @@ import { useWrapperSlice, wrapperActions } from './slice';
 import * as apiActions from 'api/actions';
 import * as url from 'utils/urls';
 import Player from 'app/helper/Player';
-interface Props {
+import { useLocation } from 'react-router-dom';
+
+interface WrapperProps {
   children?: React.ReactChild | React.ReactChild[];
 }
-
-export default function Wrapper(props: Props) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+export default function Wrapper(props: WrapperProps) {
   useWrapperSlice();
   const history = useHistory();
+  const location = useLocation();
   const dispatch = useDispatch();
   const wrapperState = useSelector(selectWrapper);
 
-  const user = wrapperState.user;
   const currentTrack = wrapperState.currentTrack;
 
   const player = React.useMemo(() => Player.getInstance(), []);
+
+  // TODO: 로직 제대로 수정하기
+  useEffect(() => {
+    const at = sessionStorage.getItem('accessToken') ?? undefined;
+    const isLogout = localStorage.getItem('isLogout') ?? undefined;
+    const isAnonymous = localStorage.getItem('isAnonymous') ?? undefined;
+    if (location && location.pathname === '/signup') {
+      return;
+    }
+    if (at) {
+      dispatch(wrapperActions.setAccessToken(at));
+      if (wrapperState.user === undefined) {
+        dispatch(apiActions.loadMyProfileInAuth.request());
+      }
+    } else {
+      if (isLogout !== 'true' && isAnonymous !== 'true') {
+        dispatch(apiActions.loadMyProfileInAuth.request());
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, history, wrapperState.user]);
+
+  useEffect(() => {
+    if (wrapperState.auth.error) {
+      history.push(url.SignIn());
+    }
+  }, [history, wrapperState.auth.error]);
 
   useEffect(() => {
     player.pause();
@@ -55,7 +82,7 @@ export default function Wrapper(props: Props) {
 
   const onSignOutClicked = useCallback(() => {
     dispatch(wrapperActions.signOut());
-    history.replace(url.Main());
+    history.replace(url.SignIn());
   }, [dispatch, history]);
 
   const onProfileClicked = useCallback(() => {
@@ -72,7 +99,6 @@ export default function Wrapper(props: Props) {
   const onLikeClicked = useCallback(
     (track: TrackInfo) => {
       if (track.combinationId) {
-        console.log('track', track.combinationId);
         dispatch(
           apiActions.editCombinationLike.request({
             combinationId: track.combinationId,
@@ -90,7 +116,7 @@ export default function Wrapper(props: Props) {
   return (
     <div data-testid="Wrapper" className="relative w-full h-full">
       <Header
-        user={user}
+        accessToken={wrapperState.accessToken}
         onSearchClicked={onSearchClicked}
         onSignInClicked={onSignInClicked}
         onSignUpClicked={onSignUpClicked}

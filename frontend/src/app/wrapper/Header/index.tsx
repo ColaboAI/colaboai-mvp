@@ -3,7 +3,7 @@ import * as React from 'react';
 import { ReactComponent as Logo } from 'res/logo.svg';
 
 interface Props {
-  user?: UserInfo;
+  accessToken?: string | null;
   onSearchClicked?: (key: string) => void;
   onSignInClicked: () => void;
   onSignUpClicked: () => void;
@@ -38,7 +38,7 @@ export default function Header(props: Props) {
       <div className="flex-auto mx-4 max-w-lg">
         <Search onSearchClicked={props.onSearchClicked} />
       </div>
-      {props.user ? (
+      {props.accessToken ? (
         /* when logged in  */
         <div className="flex-none">
           <button

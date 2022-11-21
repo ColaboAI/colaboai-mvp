@@ -8,7 +8,7 @@ from django.http.request import HttpRequest
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import mixins, generics, status
-
+from dj_rest_auth.jwt_auth import JWTCookieAuthentication
 from bandcruit.settings import FILE_UPLOAD_MAX_MEMORY_SIZE
 from band.models import Cover, Song
 from band.serializers import CoverSerializer, CoverLikeSerializer
@@ -19,6 +19,7 @@ class CoverSong(mixins.ListModelMixin, generics.GenericAPIView):
 
     queryset = Cover.objects.none()
     serializer_class = CoverSerializer
+    authentication_classes = (JWTCookieAuthentication,)
 
     def get(self, request: HttpRequest, song_id: int):
         self.queryset = Cover.objects.filter(song__id=song_id)
@@ -89,6 +90,7 @@ class CoverInfo(mixins.RetrieveModelMixin, generics.GenericAPIView):
 
     queryset = Cover.objects.all()
     serializer_class = CoverSerializer
+    authentication_classes = (JWTCookieAuthentication,)
 
     def update(self, request: Request, *args, **kwargs):
         instance = self.get_object()

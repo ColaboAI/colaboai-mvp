@@ -6,12 +6,13 @@ import { AxiosError } from 'axios';
 export const signin = asyncAction<SignInForm, UserInfo, string>(AT.LOAD_SIGNIN);
 export const signup = asyncAction<SignUpForm, null, string>(AT.LOAD_SIGNUP);
 export const loadProfile = asyncAction<number, User, string>(AT.LOAD_PROFILE);
+export const loadMyProfileInAuth = asyncAction<undefined, User, AxiosError>(
+  AT.LOAD_MY_PROFILE_IN_AUTH,
+);
 export const loadMyProfile = asyncAction<undefined, User, AxiosError>(
   AT.LOAD_MY_PROFILE,
 );
-export const refreshToken = asyncAction<undefined, string, string>(
-  AT.REFRESH_TOKEN,
-);
+
 export const postProfile = asyncAction<UserPostForm, User, string>(
   AT.POST_PROFILE,
 );
@@ -119,3 +120,13 @@ export const deleteSongComment = asyncAction<
   number,
   AxiosError
 >(AT.DELETE_SONG_COMMENT);
+
+export const loadAccessTokenFromRefreshToken = asyncAction<
+  undefined,
+  string,
+  AxiosError
+>(AT.LOAD_ACCESS_TOKEN_FROM_REFRESH_TOKEN);
+
+export const verifyAccessToken = asyncAction<undefined, string, AxiosError>(
+  AT.VERIFY_ACCESS_TOKEN,
+);

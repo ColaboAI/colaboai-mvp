@@ -35,6 +35,7 @@ jest.mock('./WavePlayer', () => {
 
 const wrapperWithUser: WrapperState = {
   user: dummyCovers[1].user,
+  auth: { loading: false },
 };
 
 function setup() {

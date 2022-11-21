@@ -88,9 +88,7 @@ export default function SongPage(props: Props) {
   useEffect(() => {
     if (!combinationResponse.loading) {
       if (combinationResponse.error) {
-        console.log(combinationResponse.error);
       } else if (combinationResponse.data) {
-        console.log(combinationResponse.data);
         const currentSongInfo = songResponse.data!;
         let sources: string[] = combination
           .filter(item => item.cover)

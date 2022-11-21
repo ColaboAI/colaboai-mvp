@@ -23,6 +23,9 @@ const slice = createSlice({
   name: 'cover', // 이 이름을 types/RootState.ts에 써놓아야 함
   initialState,
   reducers: {
+    clearDeleteResponse(state, _action: PayloadAction<undefined>) {
+      state.deleteResponse = { loading: false };
+    },
     loadingCoverResponse(state, _action: PayloadAction<any>) {
       state.coverResponse = { loading: true };
       return state;

@@ -10,7 +10,6 @@ import { CoverState } from 'app/containers/CoverPage/slice';
 import { SignUpState } from 'app/containers/SignUpPage/slice';
 import { CoverEditState } from 'app/containers/CoverEditPage/slice';
 import { ProfileState } from 'app/containers/MyProfilePage/slice';
-// import { ProfileState } from 'app/containers/ProfilePage/slice';
 // import { CreateCover } from '../utils/urls';
 // [IMPORT NEW CONTAINERSTATE ABOVE] < Needed for generating containers seamlessly
 

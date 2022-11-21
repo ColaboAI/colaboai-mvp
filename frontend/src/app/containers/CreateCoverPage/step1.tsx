@@ -29,7 +29,7 @@ interface MatchParams {
   id?: string;
 }
 export interface Props extends RouteComponentProps<MatchParams> {}
-
+// TODO: 업로드 후 다시 업로드 할 때, 기존의 녹음 파일이 남아있는 문제 해결
 export default function CreateCoverRecord(props: Props) {
   const [useMergedAudio, setUseMergedAudio] = useState(false);
   const [mergedUrl, setMergedUrl] = useState<string | null>(null);
@@ -43,7 +43,9 @@ export default function CreateCoverRecord(props: Props) {
   const [isRecordingEnabled, setIsRecordingEnabled] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [withAudio, setWithAudio] = useState(true);
-
+  const [withReference, setWithReference] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
   const [refUrl, setRefUrl] = useState<string>('');
   const songId = props.match.params.id;
   const player = Player.getInstance();
@@ -142,11 +144,17 @@ export default function CreateCoverRecord(props: Props) {
       if (withAudio) {
         player.pause();
       }
+      if (withReference) {
+        setIsPlaying(false);
+      }
     } else {
       startRecording();
       if (withAudio) {
         player.setCurrentTime(0);
         player.play();
+      }
+      if (withReference) {
+        setIsPlaying(true);
       }
     }
     setIsRecording(!isRecording);
@@ -160,10 +168,22 @@ export default function CreateCoverRecord(props: Props) {
           player.play();
         } else if (key === 'pause') {
           player.pause();
+        } else if (key === 'seeked') {
+          player.setCurrentTime(time);
+        }
+      } else if (withReference) {
+        if (key === 'play') {
+          setIsPlaying(true);
+          setCurrentTime(time);
+        } else if (key === 'pause') {
+          setIsPlaying(false);
+          setCurrentTime(time);
+        } else if (key === 'seeked') {
+          setCurrentTime(time);
         }
       }
     },
-    [player, withAudio],
+    [player, withAudio, withReference],
   );
 
   const onCancelClicked = (
@@ -227,13 +247,13 @@ export default function CreateCoverRecord(props: Props) {
         <table>
           <thead>
             <tr>
-              <th>Merge</th>
+              <th>선택</th>
               <th>ID</th>
-              <th>Start time</th>
-              <th>End time</th>
+              <th>시작 시간</th>
+              <th>종료 시간</th>
               <th>Label text</th>
-              <th>Play</th>
-              <th>Delete</th>
+              <th>듣기</th>
+              <th>삭제하기</th>
             </tr>
           </thead>
           <tbody>{renderSegmentRows(segments)}</tbody>
@@ -244,7 +264,7 @@ export default function CreateCoverRecord(props: Props) {
           type="button"
           onClick={e => mergeSegments()}
         >
-          Merge
+          편집하기
         </button>
       </React.Fragment>
     );
@@ -273,17 +293,33 @@ export default function CreateCoverRecord(props: Props) {
       className="flex flex-col items-center"
     >
       {/* 참조할 영상 또는 음원 파일 재생하는 부분 */}
-      <YoutubePlayer url={refUrl} />
+      <YoutubePlayer
+        url={refUrl}
+        isPlaying={isPlaying}
+        currentTime={currentTime}
+        setCurrentTime={setCurrentTime}
+      />
 
-      <div>
-        <input
-          data-testid={`check_preview`}
-          type="checkbox"
-          className="form-checkbox"
-          checked={withAudio}
-          onChange={() => setWithAudio(!withAudio)}
-        />
-        <span className="ml-2">with audio</span>
+      <div className="flex space-x-4">
+        <div>
+          <input
+            data-testid={`check_preview`}
+            type="checkbox"
+            className="form-checkbox"
+            checked={withAudio}
+            onChange={() => setWithAudio(!withAudio)}
+          />
+          <span className="ml-2">콜라보 들으며 편집</span>
+        </div>
+        <div>
+          <input
+            type="checkbox"
+            className="form-checkbox"
+            checked={withReference}
+            onChange={() => setWithReference(!withReference)}
+          />
+          <span className="ml-2">참고 영상 보며 편집</span>
+        </div>
       </div>
 
       {/* 취소, 업로드, 녹음, 다음 페이지 */}
@@ -365,7 +401,7 @@ export default function CreateCoverRecord(props: Props) {
               }}
               className="items-center my-3 mx-3 px-4 py-3 rounded-md bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-300 hover:bg-blue-300"
             >
-              Use Merged Audio
+              편집한 오디오 사용
             </button>
           </div>
         </div>
@@ -380,7 +416,7 @@ export default function CreateCoverRecord(props: Props) {
           onClick={onCancelClicked}
           className="inline-flex items-center justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-red-700 disabled:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-600"
         >
-          Cancel
+          취소
         </button>
 
         <div className="flex flex-row lg:space-x-40 md:space-x-20 sm:space-x-10">
@@ -416,7 +452,7 @@ export default function CreateCoverRecord(props: Props) {
           disabled={!(mergedUrl || recordedUrl || uploadedUrl)}
           className="inline-flex items-center justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
-          Next
+          다음
         </button>
       </div>
     </div>

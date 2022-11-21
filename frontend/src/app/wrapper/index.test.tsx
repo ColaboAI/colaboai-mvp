@@ -12,12 +12,8 @@ import { api } from 'api/band';
 jest.mock('app/helper/TrackPlayer');
 
 const store = configureAppStore();
-const mockHistoryPush = jest.fn().mockImplementation(() => {
-  console.log('push');
-});
-const mockHistoryGo = jest.fn().mockImplementation(() => {
-  console.log('go');
-});
+const mockHistoryPush = jest.fn().mockImplementation(() => {});
+const mockHistoryGo = jest.fn().mockImplementation(() => {});
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useHistory: () => ({
@@ -25,6 +21,9 @@ jest.mock('react-router', () => ({
     go: mockHistoryGo,
   }),
 }));
+const defaultWrapperState: WrapperState = {
+  auth: { loading: true },
+};
 
 function setup() {
   const path = '/';
@@ -55,6 +54,7 @@ describe('index', () => {
   test('should render signout and profile buttons when logged in', () => {
     jest.spyOn(console, 'log').mockImplementation();
     const mockState: WrapperState = {
+      ...defaultWrapperState,
       user: {
         id: 0,
         username: 'USERNAME',
@@ -85,7 +85,7 @@ describe('index', () => {
 
   test('should render signin and signup buttons when not logged in and logo', () => {
     jest.spyOn(console, 'log').mockImplementation();
-    const mockState: WrapperState = {};
+    const mockState: WrapperState = defaultWrapperState;
     const useSelectorMock = jest.spyOn(reactRedux, 'useSelector');
     useSelectorMock.mockReturnValue(mockState);
     const { page } = setup();
@@ -111,7 +111,7 @@ describe('index', () => {
 
   test('should get search key when click search button', () => {
     jest.spyOn(console, 'log').mockImplementation();
-    const mockState: WrapperState = {};
+    const mockState: WrapperState = defaultWrapperState;
     const useSelectorMock = jest.spyOn(reactRedux, 'useSelector');
     useSelectorMock.mockReturnValue(mockState);
     const { page } = setup();

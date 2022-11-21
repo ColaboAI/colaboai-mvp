@@ -8,14 +8,17 @@ import { selectWrapper } from 'app/wrapper/slice/selectors';
 import * as urls from 'utils/urls';
 import { Props } from '.';
 import { Crop } from 'react-image-crop';
+import toast from 'react-hot-toast';
 
+const loading = 'Loading';
 const initForm: UserPostForm = {
   id: -1,
-  username: 'Your ID',
-  description: 'Your Description',
+  username: loading,
+  description: loading,
   photo: '',
   instruments: [],
 };
+
 const initUser: User = {
   id: -1,
   username: 'Your ID',
@@ -47,48 +50,37 @@ export const useMyProfile = () => {
   // handle initial state
   useEffect(() => {
     dispatch(apiActions.loadInstruments.request());
+    dispatch(apiActions.loadMyProfile.request());
+
     return () => {
       dispatch(profileActions.clearRedux());
     };
   }, [dispatch]);
 
   useEffect(() => {
-    if (!wrapperState.user) {
-      alert('You have to login to see profile page');
-      history.replace(urls.Main());
-    } else if (!profileResponse.loading) {
+    if (wrapperState.accessToken) {
       if (profileResponse.error) {
-        alert('Failed to load profile data');
-        history.replace(urls.Main());
+        toast.error(profileResponse.error);
       } else if (profileResponse.data) {
         const user = profileResponse.data;
-        if (user.id !== wrapperState.user.id) {
-          alert('You cannot edit this cover');
-          history.replace(urls.Main());
-        } else {
-          setForm({
-            id: user.id,
-            username: user.username,
-            description: user.description,
-            // photo: user.photo,
-            instruments: user.instruments.map(instrument => instrument.id),
-          });
-          setPhoto(user.photo);
-          setCheckList(user.instruments.map(instrument => instrument.id));
-        }
-      } else {
-        if (wrapperState.accessToken) {
-          dispatch(apiActions.loadMyProfile.request());
-        } else {
-          dispatch(apiActions.refreshToken.request());
-        }
+        setForm({
+          id: user.id,
+          username: user.username,
+          description: user.description,
+          // photo: user.photo,
+          instruments: user.instruments.map(instrument => instrument.id),
+        });
+        setPhoto(user.photo);
+        setCheckList(user.instruments.map(instrument => instrument.id));
       }
+    } else if (!profileResponse.loading) {
+      dispatch(apiActions.loadMyProfile.request());
     }
   }, [
-    profileResponse,
     dispatch,
-    history,
-    wrapperState.user,
+    profileResponse.data,
+    profileResponse.error,
+    profileResponse.loading,
     wrapperState.accessToken,
   ]);
 
@@ -96,9 +88,9 @@ export const useMyProfile = () => {
   useEffect(() => {
     if (!postProfileResponse.loading) {
       if (postProfileResponse.error) {
-        alert('Failed to save' + postProfileResponse.error);
+        toast.success('저장에 실패하였습니다\n' + postProfileResponse.error);
       } else if (postProfileResponse.data) {
-        alert('saved');
+        toast.success('저장되었습니다.');
         history.replace(urls.Main());
       }
     }
@@ -157,6 +149,7 @@ export const useProfile = (props: Props) => {
   useEffect(() => {
     dispatch(apiActions.loadInstruments.request());
     dispatch(apiActions.loadProfile.request(Number(props.match.params.id)));
+    dispatch(apiActions.loadMyProfileInAuth.request());
     return () => {
       dispatch(profileActions.clearRedux());
     };
@@ -165,7 +158,7 @@ export const useProfile = (props: Props) => {
   useEffect(() => {
     if (!profileResponse.loading) {
       if (profileResponse.error) {
-        alert('Failed to load profile data');
+        toast.error('프로필 정보를 불러오는데 실패했습니다.');
         history.replace(urls.Main());
       } else if (profileResponse.data) {
         const user = profileResponse.data;
@@ -178,9 +171,8 @@ export const useProfile = (props: Props) => {
           follower: user.follower,
           following: user.following,
         });
-        // setPhoto(user.photo);
-
-        if (wrapperState.user && user.id === wrapperState.user.id) {
+        // TODO: 프로필 수정 페이지로 표현?
+        if (wrapperState.auth.data && user.id === wrapperState.auth.data.id) {
           history.replace(urls.Profile('me'));
         }
       }
@@ -192,6 +184,7 @@ export const useProfile = (props: Props) => {
     history,
     props.match.params.id,
     wrapperState.user,
+    wrapperState.auth.data,
   ]);
 
   return { form };
