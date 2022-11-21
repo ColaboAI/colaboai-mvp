@@ -2,7 +2,7 @@ import { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { useCoverSlice } from './slice';
+import { coverActions, useCoverSlice } from './slice';
 import * as apiActions from 'api/actions';
 import { selectCover } from './slice/selectors';
 import WavePlayer from './WavePlayer';
@@ -39,13 +39,14 @@ export default function CoverPage(props: Props) {
   useEffect(() => {
     if (!deleteState.loading) {
       if (deleteState.error) {
-        alert(`Failed to Delete ${deleteState.error}`);
+        toast.error(`Failed to Delete ${deleteState.error}`);
       } else if (deleteState.data) {
-        alert(`Success to Delete`);
+        toast.success(`Success to Delete`);
         history.replace(urls.Main());
+        dispatch(coverActions.clearDeleteResponse());
       }
     }
-  }, [deleteState, history]);
+  }, [deleteState, dispatch, history]);
 
   const onSingTitleClicked = useCallback(() => {
     const coverResponse = coverState.coverResponse;
