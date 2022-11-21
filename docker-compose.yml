@@ -20,7 +20,7 @@ services:
     ports:
       - 8000:8000
     # command: uwsgi --wsgi-file bandcruit/wsgi.py --http :8000
-    command: gunicorn --preload -b 0.0.0.0:8000 --workers=3 bandcruit.wsgi:application
+    command: gunicorn --preload -b 0.0.0.0:8000 --workers=3 bandcruit.wsgi:application --log-level debug --timeout 5
     volumes:
       - ./backend/:/srv/
     restart: always
