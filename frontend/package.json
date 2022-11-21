@@ -9,7 +9,6 @@
     "@fortawesome/react-fontawesome": "0.1.16",
     "@headlessui/react": "1.4.2",
     "@reduxjs/toolkit": "1.8.6",
-    "@types/fontfaceobserver": "0.0.6",
     "@types/jest": "26.0.23",
     "@types/node": "14.6.4",
     "@types/react": "17.0.13",
@@ -32,11 +31,7 @@
     "eslint-plugin-prettier": "3.4.0",
     "eslint-plugin-react-hooks": "4.2.0",
     "firebase": "9.14.0",
-    "fontfaceobserver": "2.1.0",
     "husky": "7.0.0",
-    "i18next": "20.3.2",
-    "i18next-browser-languagedetector": "6.1.2",
-    "i18next-scanner": "3.0.0",
     "inquirer": "7.3.3",
     "inquirer-directory": "2.2.0",
     "jest-styled-components": "7.0.4",
@@ -47,9 +42,9 @@
     "peaks.js": "2.1.0",
     "plop": "2.7.4",
     "prettier": "2.3.2",
-    "react": "18.2.0",
+    "react": "17.0.2",
     "react-app-polyfill": "2.0.0",
-    "react-dom": "18.2.0",
+    "react-dom": "17.0.2",
     "react-easy-crop": "3.5.3",
     "react-helmet-async": "1.0.9",
     "react-hook-form": "7.39.4",
@@ -162,6 +157,10 @@
         "statements": 90
       }
     }
+  },
+  "resolutions": {
+    "@types/react": "17.0.2",
+    "@types/react-dom": "17.0.2"
   },
   "proxy": "http://localhost:8000"
 }
