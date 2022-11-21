@@ -28,7 +28,8 @@ import MyProfilePage from './containers/MyProfilePage';
 
 import * as url from 'utils/urls';
 import AuthProvider from 'api/band/client';
-
+import { initFirebase } from 'api/firebase';
+initFirebase();
 export function App() {
   return (
     <BrowserRouter>
