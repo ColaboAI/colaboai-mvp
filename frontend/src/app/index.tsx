@@ -33,7 +33,7 @@ initFirebase();
 export function App() {
   return (
     <BrowserRouter>
-      <div className="app">
+      <div className="app" data-testid={'App'}>
         <Helmet titleTemplate="%s - ColaboAI" defaultTitle="ColaboAI">
           <meta name="description" content="ColaboAI" />
         </Helmet>
