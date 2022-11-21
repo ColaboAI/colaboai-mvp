@@ -72,7 +72,7 @@ class WaveformView extends Component<Props, State> {
           className="px-4 py-3 justify-center items-center rounded-md bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-300 hover:bg-blue-300"
           onClick={this.zoomIn}
         >
-          Zoom in
+          확대
         </button>
         &nbsp;
         <button
@@ -80,14 +80,14 @@ class WaveformView extends Component<Props, State> {
           className="px-4 py-3 justify-center items-center rounded-md bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-300 hover:bg-blue-300"
           onClick={this.zoomOut}
         >
-          Zoom out
+          축소
         </button>
         <button
           data-testid="AddSegment"
           className="px-4 py-3 justify-center items-center rounded-md bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-300 hover:bg-blue-300"
           onClick={this.addSegment}
         >
-          Add Segment
+          편집점 추가
         </button>
       </div>
     );
@@ -101,6 +101,9 @@ class WaveformView extends Component<Props, State> {
     );
     audioElement.addEventListener('pause', _ =>
       this.props.onPlayPause('pause', audioElement.currentTime),
+    );
+    audioElement.addEventListener('seeked', _ =>
+      this.props.onPlayPause('seeked', audioElement.currentTime),
     );
   }
 

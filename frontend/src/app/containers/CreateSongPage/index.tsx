@@ -19,7 +19,7 @@ export default function CreateSongPage(props: Props) {
   const [Form, setForm] = useState<SongForm>({
     title: '',
     singer: '',
-    category: 'Pop',
+    category: '',
     reference: '',
     description: '',
   });
@@ -75,7 +75,7 @@ export default function CreateSongPage(props: Props) {
             <div className="grid grid-cols-6 gap-6">
               <div className="col-span-6">
                 <label htmlFor="title" className={styles.label}>
-                  Title
+                  노래 제목
                 </label>
                 <input
                   type="text"
@@ -89,7 +89,7 @@ export default function CreateSongPage(props: Props) {
 
               <div className="col-span-6">
                 <label htmlFor="singer" className={styles.label}>
-                  Artist
+                  아티스트
                 </label>
                 <input
                   type="text"
@@ -103,11 +103,12 @@ export default function CreateSongPage(props: Props) {
 
               <div className="col-span-6 sm:col-span-3">
                 <label htmlFor="category" className={styles.label}>
-                  Category
+                  카테고리
                 </label>
                 <input
                   name="category"
                   id="category"
+                  placeholder='ex) "K-POP", "OST", "POP", "R&B"'
                   value={Form.category}
                   onChange={e => onChangeForm(e, 'category')}
                   className={styles.input}
@@ -116,12 +117,13 @@ export default function CreateSongPage(props: Props) {
 
               <div className="col-span-6">
                 <label htmlFor="reference" className={styles.label}>
-                  Reference Link
+                  원곡 링크( Youtube, Soundcloud 등 )
                 </label>
                 <input
                   type="text"
                   name="reference"
                   id="reference"
+                  placeholder="https://www.youtube.com/... or https://soundcloud.com/..."
                   value={Form.reference}
                   onChange={e => onChangeForm(e, 'reference')}
                   className={styles.input}
@@ -130,7 +132,7 @@ export default function CreateSongPage(props: Props) {
 
               <div className="col-span-6">
                 <label htmlFor="description" className={styles.label}>
-                  Description (optional)
+                  설명 (선택)
                 </label>
                 <textarea
                   name="description"

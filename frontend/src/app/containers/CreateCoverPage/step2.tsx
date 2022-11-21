@@ -100,10 +100,10 @@ export default function CreateCoverInfoPage(props: Props) {
       className="flex flex-col items-center"
     >
       <h3 className="text-lg font-medium leading-6 text-gray-900">
-        Cover's Detail Information.
+        음원 정보 입력
       </h3>
       <p className="mt-1 text-sm text-gray-600">
-        Please write down the details of the recorded or uploaded cover song.
+        녹음 또는 업로드 하신 음원의 정보를 입력해주세요.
       </p>
 
       <div className="w-full sm:w-3/4 max-w-screen-md m-5">
@@ -116,7 +116,7 @@ export default function CreateCoverInfoPage(props: Props) {
             <div className="grid grid-cols-6 gap-6">
               <div className="col-span-6">
                 <label htmlFor="title" className={styles.label}>
-                  Title
+                  제목
                 </label>
                 <input
                   data-testid="title"
@@ -130,7 +130,7 @@ export default function CreateCoverInfoPage(props: Props) {
               </div>
               <div className="col-span-6">
                 <label htmlFor="category" className={styles.label}>
-                  Category
+                  카테고리 (장르)
                 </label>
                 <input
                   data-testid="category"
@@ -145,7 +145,7 @@ export default function CreateCoverInfoPage(props: Props) {
 
               <div className="col-span-6">
                 <label htmlFor="instrument" className={styles.label}>
-                  Instrument Type
+                  악기 타입
                 </label>
                 <select
                   data-testid="select"
@@ -166,7 +166,7 @@ export default function CreateCoverInfoPage(props: Props) {
 
               <div className="col-span-6">
                 <label htmlFor="tags" className={styles.label}>
-                  Tags (optional)
+                  해시태그 (선택)
                 </label>
                 <p className={styles.tag}>
                   {Form.tags.map(tag => {
@@ -187,7 +187,7 @@ export default function CreateCoverInfoPage(props: Props) {
 
               <div className="col-span-6">
                 <label htmlFor="description" className={styles.label}>
-                  Description (optional)
+                  설명 (선택)
                 </label>
                 <textarea
                   data-testid="description"
@@ -208,7 +208,7 @@ export default function CreateCoverInfoPage(props: Props) {
               onClick={e => onPrevClicked(e)}
               className="inline-flex items-center justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-red-700 disabled:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-600"
             >
-              Previous
+              이전
             </button>
             <button
               data-testid="submit-btn"
@@ -217,7 +217,7 @@ export default function CreateCoverInfoPage(props: Props) {
               onClick={e => onSubmitForm(e)}
               className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              Submit
+              작성하기
             </button>
           </div>
         </form>
