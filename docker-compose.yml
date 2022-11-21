@@ -3,8 +3,9 @@ version: '3.7'
 services:
   front:
     # TODO: fix image
-    # image: titieiti/metaband:1.1
-    build: ./frontend
+    image: chooi221/colabo-mvp-web-front:1.2
+    platform: linux/amd64
+    # build: ./frontend
     container_name: front
     ports:
       - 443:443
@@ -18,7 +19,7 @@ services:
     container_name: backend
     ports:
       - 8000:8000
-    command: gunicorn --bind 0.0.0.0:8000 bandcruit.wsgi:application
+    command: uwsgi --wsgi-file bandcruit/wsgi.py --http 0.0.0.0:8000
     volumes:
       - ./backend/:/srv/
     restart: always
