@@ -22,5 +22,6 @@ RUN ln -s /etc/nginx/sites-available/nginx.conf /etc/nginx/sites-enabled/nginx.c
 
 RUN mkdir -p /usr/share/nginx/html
 RUN cp -r build/* /usr/share/nginx/html/
+EXPOSE 80
 
 # CMD ["nginx", "-g", "daemon off;"]
