@@ -10,7 +10,9 @@ from django_apscheduler.jobstores import register_events, DjangoJobStore
 
 from band.models import RecoSong, Cover, Combination
 
-RECOMMENDATION_URL = "https://bandreco.s3.ap-northeast-2.amazonaws.com/result.pickle"
+RECOMMENDATION_URL = (
+    "https://colaboaireco.s3.ap-northeast-2.amazonaws.com/result.pickle"
+)
 
 
 def update_reco_dict():

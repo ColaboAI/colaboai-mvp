@@ -39,6 +39,7 @@ class CombinationSong(mixins.ListModelMixin, generics.GenericAPIView):
         data = request.data.copy()
 
         covers = data.pop("covers")
+        # 처음 녹음할 때 에러 발생
         if covers is None or len(covers) == 0:
             return Response("No covers provided.", status=status.HTTP_400_BAD_REQUEST)
 
