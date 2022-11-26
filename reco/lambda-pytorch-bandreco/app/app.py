@@ -7,10 +7,15 @@ import numpy as np
 
 from preprocessor import make_specgram, transform_img, mixing_audios
 from FE import prepare_model, inference_img, find_nearest
-from collecter import get_max_view_combi, load_output_from_s3, save_output_to_s3, save_to_s3
+from collecter import (
+    get_max_view_combi,
+    load_output_from_s3,
+    save_output_to_s3,
+    save_to_s3,
+)
 from utils import ensure_dir, make_result_dict, outputs_to_vecs
 
-MEDIA_URL = "https://metaband.space/media/"
+MEDIA_URL = "https://colaboai-mvp.s3.ap-northeast-2.amazonaws.com/media/"
 AUDIO_DIR = "/tmp/audio/"
 MIXIN_DIR = "/tmp/mixin/"
 n_features = 30
@@ -60,6 +65,7 @@ def main():
         audio_files = []
         for aud in audios:
             r = requests.get(MEDIA_URL + aud)
+            # r = requests.get(aud)
             audio_file = os.path.join(song_dir, os.path.split(aud)[1])
             with open(audio_file, "wb") as f:
                 f.write(r.content)

@@ -1,0 +1,10 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "colabo-reco"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-ygihrma8b4vh"
+s3_prefix = "colabo-reco"
+region = "ap-northeast-2"
+capabilities = "CAPABILITY_IAM"
+image_repositories = ["InferenceFunction=935612526145.dkr.ecr.ap-northeast-2.amazonaws.com/lambda-pytorch-colaboai-reco"]

@@ -7,18 +7,19 @@ RUN cd /usr/local/bin && \
     rm -f *.tar.xz && \
     mv ffmpeg-git-*-amd64-static/* .
 
-FROM public.ecr.aws/lambda/python:3.8
+FROM public.ecr.aws/lambda/python:3.8-x86_64
 
 RUN yum install -y libsndfile
 
 COPY requirements.txt ./
 COPY model.pth /opt/ml/model.pth
+RUN python3.8 -m pip install --upgrade pip setuptools wheel
 
 RUN python3.8 -m pip install -r requirements.txt -t .
 
 
 COPY --from=ffmpeg-builder /usr/local/bin/ffmpeg/* /usr/local/bin/
-COPY FE.py preprocessor.py app.py utils.py collecter.py ./
+COPY FE.py preprocessor.py app.py utils.py collecter.py secrets.json ./
 ENV NUMBA_CACHE_DIR=/tmp
 
 CMD ["app.lambda_handler"]
