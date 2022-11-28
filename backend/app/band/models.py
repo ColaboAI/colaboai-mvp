@@ -83,7 +83,7 @@ class Cover(models.Model):
     :field song: The 'Song' of this cover
     :field tags: The 'CoverTag's of this cover
     :field likes: The 'User's who likes this cover.
-    :field views: The view count for this cover
+    :field view: The view count for this cover
     :field combination: The 'Combination' this cover was made to / null if there was no combination
     """
 

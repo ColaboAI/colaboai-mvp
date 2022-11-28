@@ -10,7 +10,8 @@ RUN apt-get install -y netcat default-libmysqlclient-dev
 COPY requirements.txt .
 
 RUN pip install -r requirements.txt
-RUN pip install gunicorn pycopg2
+RUN pip install gunicorn 
+RUN pip install uwsgi
 
 # COPY ./app .
 

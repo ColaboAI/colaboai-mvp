@@ -3,11 +3,14 @@ version: '3.7'
 services:
   front:
     # TODO: fix image
-    # image: titieiti/metaband:1.1
-    build: ./frontend
+    image: chooi221/colabo-mvp-web-front:1.2
+    platform: linux/amd64
+    # build: ./frontend
     container_name: front
     ports:
+      - "80:80"
       - 443:443
+
     command: nginx -g "daemon off;"
     volumes:
       - /etc/letsencrypt/:/etc/letsencrypt/
@@ -18,7 +21,8 @@ services:
     container_name: backend
     ports:
       - 8000:8000
-    command: gunicorn --bind 0.0.0.0:8000 bandcruit.wsgi:application
+    # command: uwsgi --wsgi-file bandcruit/wsgi.py --http :8000
+    command: gunicorn -b 0.0.0.0:8000 --workers=3 bandcruit.wsgi:application
     volumes:
       - ./backend/:/srv/
     restart: always

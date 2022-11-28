@@ -9,15 +9,6 @@ import 'react-app-polyfill/stable';
 
 import 'jest-styled-components';
 
-import Enzyme from 'enzyme';
-import EnzymeAdapter from 'enzyme-adapter-react-17-updated';
-
-Enzyme.configure({
-  // @ts-ignore
-  adapter: new EnzymeAdapter(),
-  disableLifecycleMethods: true,
-});
-
 jest.mock('axios', () => ({
   ...jest.requireActual('axios'),
   create: () => {

@@ -15,7 +15,7 @@ export function* putCombinationLikeRequest(
   action: ActionType<typeof actions.editCombinationLike.request>,
 ) {
   try {
-    const response = yield api.putCombinationLike(action.payload);
+    yield api.putCombinationLike(action.payload);
   } catch (e: any) {}
 }
 

@@ -1,30 +1,64 @@
-import mysql.connector
 from collections import defaultdict
 import pickle
 import boto3
+from pathlib import Path
+import os
+import json
+from json.decoder import JSONDecodeError
+import psycopg2
 
-bucket_name = "bandreco"
+bucket_name = "colaboaireco"
 key_to_pickle = "outputs.pickle"
+
+BASE_DIR = Path(__file__).resolve().parent
+secret_file = os.path.join(BASE_DIR, "secrets.json")
+try:
+    with open(secret_file, encoding="utf8") as f:
+        secrets = json.loads(f.read())
+except (FileNotFoundError, JSONDecodeError):
+    secrets = {}
+
+
+def get_secret(setting, fallback="asdsad"):
+    try:
+        return secrets[setting]
+
+    except KeyError:
+        return fallback
 
 
 def get_max_view_combi():
-    mydb = mysql.connector.connect(
-        host="metaband.space", user="band", passwd="dlrjsqlalf", database="bandcruit"
+    mydb = psycopg2.connect(
+        host=get_secret("DB_HOST"),
+        user=get_secret("DB_USER"),
+        password=get_secret("DB_PASSWORD"),
+        dbname=get_secret("DB_NAME"),
+        port=get_secret("DB_PORT"),
     )
     cur = mydb.cursor()
 
     query = """
-    SELECT covers.audio, covers.song_id, filterd_comb.comb_id
-    FROM Cover covers
-    INNER JOIN Cover_Combination cc 
-    ON covers.id = cc.cover_id
-    INNER JOIN 
-    (SELECT comb.song_id, comb.id AS comb_id FROM(
-        SELECT ANY_VALUE(comb.id) AS id, max(comb.view) AS view
-        FROM Combination comb
-        GROUP BY song_id) c_max
-        INNER JOIN Combination comb ON c_max.id = comb.id) filterd_comb 
-    ON filterd_comb.comb_id = cc.combination_id
+    SELECT
+        covers.audio,
+        covers.song_id,
+        filterd_comb.comb_id
+    FROM
+        "Cover" covers
+        INNER JOIN "Cover_Combination" cc ON covers.id = cc.cover_id
+        INNER JOIN (
+            SELECT
+                comb.song_id,
+                comb.id AS comb_id
+            FROM (
+                SELECT
+                    comb.id AS id,
+                    max(comb.view) AS views
+                FROM
+                    "Combination" comb
+                GROUP BY
+                    song_id,
+                    id) c_max
+                INNER JOIN "Combination" comb ON c_max.id = comb.id) filterd_comb ON filterd_comb.comb_id = cc.combination_id
     """
     cur.execute(query)
     covers = defaultdict(list)
