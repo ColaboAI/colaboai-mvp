@@ -9,6 +9,7 @@ import { selectMain } from './slice/selectors';
 import { useMainSlice } from './slice';
 import { useWrapperSlice } from 'app/wrapper/slice';
 import { selectWrapper } from 'app/wrapper/slice/selectors';
+import toast from 'react-hot-toast';
 
 export type Props = {};
 
@@ -33,21 +34,21 @@ export default function MainPage(props: Props) {
   useEffect(() => {
     if (!combinationsResponse.loading) {
       if (combinationsResponse.error) {
-        window.alert('Error: could not fetch bands.');
+        toast.error('Error: could not fetch bands.');
       } else if (combinationsResponse.data && player) {
+        const trackInfos = combinationsResponse.data.map(combination => {
+          const sources = combination.covers.map(cover => cover.audio);
+          const trackInfo: TrackInfo = {
+            combinationId: combination.id,
+            song: combination.song,
+            sources,
+            like: false,
+          };
+          return trackInfo;
+        });
         // setting tracks
-        setTrackInfos(
-          combinationsResponse.data.map(combination => {
-            const sources = combination.covers.map(cover => cover.audio);
-            const trackInfo: TrackInfo = {
-              combinationId: combination.id,
-              song: combination.song,
-              sources,
-              like: false,
-            };
-            return trackInfo;
-          }),
-        );
+        setTrackInfos(trackInfos);
+        player.setTracks(trackInfos);
       }
     }
   }, [combinationsResponse, player]);
