@@ -174,6 +174,7 @@ export default function MyProfilePage(props: Props) {
             <canvas
               ref={previewCanvasRef}
               style={{
+                objectFit: 'contain',
                 width: Math.round(completedCrop?.width ?? 0),
                 height: Math.round(completedCrop?.height ?? 0),
               }}
