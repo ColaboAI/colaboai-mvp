@@ -28,6 +28,14 @@ const slice = createSlice({
       state.combinationsResponse = { loading: false };
       state.combinationsResponse.error = action.payload;
     },
+    putCombinationData(state, action: PayloadAction<Combination>) {
+      const target = state.combinationsResponse.data?.filter(
+        combination => combination.id === action.payload.id,
+      );
+      if (target?.length === 1) {
+        target[0] = action.payload;
+      }
+    },
   },
 });
 

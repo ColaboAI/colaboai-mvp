@@ -11,6 +11,7 @@ import * as apiActions from 'api/actions';
 import * as url from 'utils/urls';
 import Player from 'app/helper/Player';
 import { useLocation } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 interface WrapperProps {
   children?: React.ReactChild | React.ReactChild[];
@@ -96,7 +97,10 @@ export default function Wrapper(props: WrapperProps) {
   );
 
   const onLikeClicked = useCallback(
-    (track: TrackInfo) => {
+    async (track: TrackInfo) => {
+      if (wrapperState.user === undefined) {
+        toast.error('로그인이 필요한 기능입니다.');
+      }
       if (track.combinationId) {
         dispatch(
           apiActions.editCombinationLike.request({
@@ -108,8 +112,9 @@ export default function Wrapper(props: WrapperProps) {
 
       const newTrack = { ...track, like: !track.like };
       setTrack(newTrack);
+      player.putTrack(newTrack);
     },
-    [dispatch, setTrack],
+    [dispatch, player, setTrack, wrapperState.user],
   );
 
   return (

@@ -101,6 +101,7 @@ export default function SongPage(props: Props) {
           song: currentSongInfo,
           sources,
           like: false,
+          likeCount: 10,
         };
         player.addTrack(currentTrackInfo);
       }

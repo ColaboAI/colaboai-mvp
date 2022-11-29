@@ -159,14 +159,16 @@ export const dummyCombinations: Combination[] = [
     views: 141,
     song: dummySongs[0],
     covers: [dummyCovers[0], dummyCovers[1], dummyCovers[2]],
-    likes: 25,
+    likes: [0, 1, 2],
+    likeCount: 3,
   },
   {
     id: 1,
     views: 93,
     song: dummySongs[0],
     covers: [dummyCovers[1], dummyCovers[2], dummyCovers[3]],
-    likes: 14,
+    likes: [1, 2, 3],
+    likeCount: 3,
   },
 ];
 
@@ -176,5 +178,6 @@ export const dummyTrackInfos: TrackInfo[] = [
     song: dummySongs[0],
     sources: ['dummysource'],
     like: false,
+    likeCount: 99,
   },
 ];

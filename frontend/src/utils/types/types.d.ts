@@ -15,7 +15,8 @@ interface Combination {
   views: number;
   song: Song;
   covers: Cover[];
-  likes: number;
+  likes: number[];
+  likeCount: number;
 }
 
 interface CombinationForm {
@@ -126,6 +127,7 @@ type TrackInfo = {
   song: SongInfo;
   sources: string[];
   like: boolean;
+  likeCount: number;
 };
 
 type ResultLine = {

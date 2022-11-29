@@ -19,6 +19,7 @@ export default function MainPage(props: Props) {
   const history = useHistory();
   const dispatch = useDispatch();
   const mainState = useSelector(selectMain);
+  const wrapperState = useSelector(selectWrapper);
   const [trackInfos, setTrackInfos] = useState<TrackInfo[]>([]);
   useSelector(selectWrapper);
 
@@ -36,13 +37,15 @@ export default function MainPage(props: Props) {
       if (combinationsResponse.error) {
         toast.error('Error: could not fetch bands.');
       } else if (combinationsResponse.data && player) {
+        const uid = wrapperState.user?.id;
         const trackInfos = combinationsResponse.data.map(combination => {
           const sources = combination.covers.map(cover => cover.audio);
           const trackInfo: TrackInfo = {
             combinationId: combination.id,
             song: combination.song,
             sources,
-            like: false,
+            like: uid ? combination.likes.includes(uid) : false,
+            likeCount: combination.likeCount,
           };
           return trackInfo;
         });
@@ -51,7 +54,7 @@ export default function MainPage(props: Props) {
         player.setTracks(trackInfos);
       }
     }
-  }, [combinationsResponse, player]);
+  }, [combinationsResponse, player, wrapperState.user]);
 
   const onClickPlay = useCallback(
     (index: number) => {
