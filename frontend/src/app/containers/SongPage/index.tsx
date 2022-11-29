@@ -61,7 +61,7 @@ export default function SongPage(props: Props) {
   useEffect(() => {
     if (!songResponse.loading) {
       if (songResponse.error) {
-        window.alert('Song page does not exist.');
+        toast.error('Song page does not exist.');
         history.push(urls.Main());
       } else if (songResponse.data) {
         dispatch(makeCombination.actions.setSong(songResponse.data));

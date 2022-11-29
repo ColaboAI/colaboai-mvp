@@ -31,7 +31,7 @@ export default function SignUpPage(props: Props) {
     } else if (password1 !== password2) {
       toast.error('비밀번호와 확인 비밀번호가 일치하지 않습니다.');
     } else if (signUpState.signUpResponse.loading) {
-      alert('Still loading');
+      toast.loading('Still loading');
     } else {
       dispatch(
         apiActions.signup.request({ username, email, password1, password2 }),
