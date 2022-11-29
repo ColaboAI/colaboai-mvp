@@ -64,3 +64,10 @@ cd backend/app
 coverage run --source='.' manage.py test
 coverage xml
 ```
+
+### Frontend Deploy
+```shell
+cd frontend
+docker build --platform linux/amd64 -t {your dockerhub id}/colabo-mvp-web-front:latest .
+docker push {your dockerhub id}/colabo-mvp-web-front:latest
+```

@@ -3,14 +3,13 @@ version: '3.7'
 services:
   front:
     # TODO: fix image
-    image: chooi221/colabo-mvp-web-front:1.2
+    image: chooi221/colabo-mvp-web-front:latest
     platform: linux/amd64
     # build: ./frontend
     container_name: front
     ports:
       - "80:80"
       - 443:443
-
     command: nginx -g "daemon off;"
     volumes:
       - /etc/letsencrypt/:/etc/letsencrypt/
