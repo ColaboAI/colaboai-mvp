@@ -151,12 +151,15 @@ class CombinationLike(generics.GenericAPIView):
 
     def put(self, request: Request, *args, **kwargs):
         instance = self.get_object()
+        print(instance)
         serializer_old: CombinationLikeSerializer = self.get_serializer(instance)
         likes: list = serializer_old.data.get("likes")
-
-        is_like = request.data.get("isLiked")
+        is_like = request.data.get("is_liked")
         if is_like is None:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         user_id = request.user.id
 
