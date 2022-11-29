@@ -244,10 +244,14 @@ export const useCropImage = () => {
       crop.height * scaleY,
     );
 
-    canvas.toBlob(blob => {
-      blob.name = 'croppedImg';
-      setCroppedImg(URL.createObjectURL(blob));
-    }, 'image/png');
+    canvas.toBlob(
+      blob => {
+        blob.name = 'croppedImg';
+        setCroppedImg(URL.createObjectURL(blob));
+      },
+      'image/jpeg',
+      0.95,
+    );
     setCompletedCrop(crop);
     ctx.restore();
   }, []);

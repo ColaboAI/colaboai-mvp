@@ -37,8 +37,8 @@ export const api = {
     if (userPostForm.photo) {
       if (!userPostForm.photo.includes('amazonaws')) {
         const blob = await fetch(userPostForm.photo).then(r => r.blob());
-        const photoFile = new File([blob], `${userPostForm.username}.png`, {
-          type: 'image/png',
+        const photoFile = new File([blob], `${userPostForm.username}.jpeg`, {
+          type: 'image/jpeg',
         });
         userFormData.append('photo', photoFile);
       }
