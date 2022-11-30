@@ -32,7 +32,9 @@ const slice = createSlice({
       }
       sessionStorage.setItem('accessToken', action.payload.accessToken);
     },
-
+    setUserFromProfilePage(state, action: PayloadAction<UserInfo>) {
+      state.user = action.payload;
+    },
     setAccessToken(state, action: PayloadAction<string | undefined>) {
       state.accessToken = action.payload;
       localStorage.setItem('isLogout', 'false');
