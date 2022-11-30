@@ -20,6 +20,6 @@ export function* getSignUpResponse(
     yield put(signUpActions.successSignUpResponse(signUpResponse.data));
     yield put(wrapperActions.setUser(signUpResponse.data));
   } catch (e: any) {
-    yield put(signUpActions.errorSignUpResponse(e));
+    yield put(signUpActions.errorSignUpResponse(e.response.data));
   }
 }

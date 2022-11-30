@@ -316,6 +316,10 @@ REST_AUTH_SERIALIZERS = {
     "USER_DETAILS_SERIALIZER": "user.serializers.UserSerializer",
 }
 
+REST_AUTH_REGISTER_SERIALIZERS = {
+    "REGISTER_SERIALIZER": "user.serializers.CustomRegisterSerializer",
+}
+
 # TODO: 회원가입시 refresh 토큰 반환되는것 수정하기.
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`
