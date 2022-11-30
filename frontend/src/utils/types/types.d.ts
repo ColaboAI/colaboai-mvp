@@ -3,6 +3,9 @@ interface SignUpForm {
   email: string;
   password1: string;
   password2: string;
+  tosAgreement: boolean;
+  privacyAgreement: boolean;
+  marketingAgreement: boolean;
 }
 interface SignInForm {
   username: string;

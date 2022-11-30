@@ -32,6 +32,9 @@ describe('band api', () => {
       email: 'MOCK_EMAIL',
       password1: 'MOCK_PASSWORD',
       password2: 'MOCK_PASSWORD',
+      tosAgreement: true,
+      privacyAgreement: true,
+      marketingAgreement: false,
     };
     const mockSigninForm: SignInForm = {
       username: 'MOCK_USERNAME',
