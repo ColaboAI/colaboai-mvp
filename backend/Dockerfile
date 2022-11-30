@@ -11,7 +11,6 @@ COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 RUN pip install gunicorn 
-RUN pip install uwsgi
 
 # COPY ./app .
 
