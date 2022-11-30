@@ -2,7 +2,7 @@
 DRF serializers for user
 """
 
-from band.serializers import CoverSerializer, InstrumentSerializer
+from band.serializers import InstrumentSerializer
 from common.proxy_file_field import ProxyFileField
 from django.contrib.auth import get_user_model
 from rest_framework import serializers

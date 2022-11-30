@@ -37,15 +37,15 @@ class CustomUser(AbstractUser):
     last_name = None
     description = models.TextField(db_column="description", default="", blank=True)
     photo = models.ImageField(upload_to=user_profile_path, default=None)
-    # followings = models.ManyToManyField(
-    #     "CustomUser",
-    #     related_name="followers",
-    #     db_table="User_Following",
-    #     blank=True,
-    #     symmetrical=False,
-    # )
     instruments = models.ManyToManyField(
         "band.Instrument", related_name="+", db_table="User_Instruments", blank=True
+    )
+    tos_agreement = models.BooleanField(db_column="tos_agreement", default=False)
+    privacy_agreement = models.BooleanField(
+        db_column="privacy_agreement", default=False
+    )
+    marketing_agreement = models.BooleanField(
+        db_column="marketing_agreement", default=False
     )
 
     USERNAME_FIELD = "email"
