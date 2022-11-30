@@ -13,8 +13,7 @@ from .managers import UserManager
 # TODO: https://stackoverflow.com/questions/68889451/how-to-optimize-django-application-for-images-and-static-files
 # Image size optimization
 def user_profile_path(instance, filename):
-    extension = os.path.splitext(filename)[1]
-    return f"profile_pic/{instance.pk}/profile{extension}"
+    return f"profile_pic/{instance.pk}/{filename}"
 
 
 class CustomUser(AbstractUser):

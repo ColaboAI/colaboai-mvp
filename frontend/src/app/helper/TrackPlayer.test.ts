@@ -13,6 +13,7 @@ const mockTrack: TrackInfo[] = mockPlaylist.map((v, index) => {
     },
     sources: [v.source, v.source],
     like: false,
+    likeCount: 12,
   };
 });
 

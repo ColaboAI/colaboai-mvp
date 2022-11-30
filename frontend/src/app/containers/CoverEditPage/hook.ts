@@ -7,6 +7,7 @@ import { selectCoverEdit } from './slice/selectors';
 import { selectWrapper } from 'app/wrapper/slice/selectors';
 import * as urls from 'utils/urls';
 import { Props } from '.';
+import toast from 'react-hot-toast';
 
 const initForm: CoverFormPut = {
   id: -1,
@@ -31,15 +32,15 @@ export const useCoverEdit = (props: Props) => {
   // handle init state
   useEffect(() => {
     if (!wrapperState.user) {
-      alert('You have to login for edit cover');
+      toast.error('You have to login for edit cover');
       history.replace(urls.Main());
     } else if (coverResponse.error) {
-      alert('Failed to load original data');
+      toast.error('Failed to load original data');
       history.replace(urls.Main());
     } else if (coverResponse.data) {
       const cover = coverResponse.data;
       if (cover.user.id !== wrapperState.user.id) {
-        alert('You cannot edit this cover');
+        toast.error('You cannot edit this cover');
         history.replace(urls.Main());
       } else if (cover.id !== form.id) {
         setForm({
@@ -65,7 +66,7 @@ export const useCoverEdit = (props: Props) => {
   useEffect(() => {
     if (!editResponse.loading) {
       if (editResponse.error) {
-        alert('Failed to save' + editResponse.error);
+        toast.error('Failed to save' + editResponse.error);
       } else if (editResponse.data) {
         history.replace(urls.Cover(props.match.params.id));
       }

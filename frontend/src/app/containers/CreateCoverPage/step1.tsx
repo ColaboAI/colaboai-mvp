@@ -25,6 +25,7 @@ import AudioEditor from 'app/helper/AudioEditor';
 import { selectCreateCover } from './slice/selectors';
 import { selectMakeCombinationSlice } from '../SongPage/slice/selectors';
 import Player from 'app/helper/Player';
+import toast from 'react-hot-toast';
 interface MatchParams {
   id?: string;
 }
@@ -78,7 +79,7 @@ export default function CreateCoverRecord(props: Props) {
     if (id && id.length > 0) {
       const peaks = WaveformView.getPeaks();
       if (!peaks) {
-        return window.alert('peaks가 없습니다.');
+        return toast.error('peaks가 없습니다.');
       }
       peaks.player.playSegment(peaks.segments.getSegment(id)!);
     }
@@ -88,7 +89,7 @@ export default function CreateCoverRecord(props: Props) {
     if (id && id.length > 0) {
       const peaks = WaveformView.getPeaks();
       if (!peaks) {
-        return window.alert('peaks가 없습니다.');
+        return toast.error('peaks가 없습니다.');
       }
 
       await peaks.segments.removeById(id);

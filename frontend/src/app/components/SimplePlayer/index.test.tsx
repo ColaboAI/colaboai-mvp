@@ -15,6 +15,7 @@ const dummyTrack: TrackInfo = {
   song: dummySongs[0],
   sources: [dummyCovers[0].audio, dummyCovers[1].audio],
   like: false,
+  likeCount: 10,
 };
 
 beforeEach(() => {

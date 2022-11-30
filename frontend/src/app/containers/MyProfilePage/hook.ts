@@ -88,7 +88,7 @@ export const useMyProfile = () => {
   useEffect(() => {
     if (!postProfileResponse.loading) {
       if (postProfileResponse.error) {
-        toast.success('저장에 실패하였습니다\n' + postProfileResponse.error);
+        toast.error('저장에 실패하였습니다\n' + postProfileResponse.error);
       } else if (postProfileResponse.data) {
         toast.success('저장되었습니다.');
         history.replace(urls.Main());
@@ -227,9 +227,8 @@ export const useCropImage = () => {
     const ctx = canvas.getContext('2d');
     const pixelRatio = window.devicePixelRatio;
 
-    canvas.width = crop.width * pixelRatio * scaleX;
-    canvas.height = crop.height * pixelRatio * scaleY;
-
+    canvas.width = Math.floor(crop.width * pixelRatio * scaleX);
+    canvas.height = Math.floor(crop.height * pixelRatio * scaleY);
     ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
     ctx.imageSmoothingQuality = 'high';
 
@@ -245,11 +244,16 @@ export const useCropImage = () => {
       crop.height * scaleY,
     );
 
-    canvas.toBlob(blob => {
-      blob.name = 'croppedImg';
-      setCroppedImg(URL.createObjectURL(blob));
-    }, 'image/png');
+    canvas.toBlob(
+      blob => {
+        blob.name = 'croppedImg';
+        setCroppedImg(URL.createObjectURL(blob));
+      },
+      'image/jpeg',
+      0.95,
+    );
     setCompletedCrop(crop);
+    ctx.restore();
   }, []);
 
   return {

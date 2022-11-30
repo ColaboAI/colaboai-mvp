@@ -160,9 +160,10 @@ export default function PlayerBar(props: Props) {
         ref={progress}
         className="absolute left-0 top-0 w-full flex justify-evenly items-center"
       >
+        {/* TODO: transition optimizing */}
         <div
           data-testid="progressBox"
-          className="w-full h-1.5 bg-gray-300 hover:h-2.5 cursor-pointer"
+          className="w-full h-1.5 bg-gray-300 hover:h-2.5 cursor-pointer transition-all"
           onClick={onProgressClick}
         >
           <div

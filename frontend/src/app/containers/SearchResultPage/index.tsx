@@ -9,6 +9,7 @@ import ResultLine from '../../components/ResultLine/index';
 import * as urls from 'utils/urls';
 import * as apiActions from 'api/actions';
 import { useSearchResultSlice } from './slice';
+import toast from 'react-hot-toast';
 
 export type Props = {};
 
@@ -30,7 +31,7 @@ export default function SearchResultPage(props: Props) {
   useEffect(() => {
     if (!songsResponse.loading) {
       if (songsResponse.error) {
-        window.alert('Error: could not fetch search results.');
+        toast.error('Error: could not fetch search results.');
       }
     }
   }, [songsResponse]);

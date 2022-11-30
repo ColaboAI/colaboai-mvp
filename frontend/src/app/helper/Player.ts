@@ -50,6 +50,19 @@ export default class Player extends TrackPlayer {
       this.tracks = [];
     }
   }
+  getTracks() {
+    return this.tracks;
+  }
+
+  putTrack(track: TrackInfo) {
+    const newTracks = this.tracks.map(t => {
+      if (t.combinationId === track.combinationId) {
+        return track;
+      }
+      return t;
+    });
+    this.tracks = [...newTracks];
+  }
 
   getTrack() {
     return this.currentTrack;
