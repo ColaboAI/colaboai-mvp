@@ -1,6 +1,7 @@
 import Search from 'app/components/Search';
 import * as React from 'react';
 import { ReactComponent as Logo } from 'res/logo.svg';
+import AvatarDropdwon from 'app/components/Dropdown/AvatarDropdown';
 
 interface Props {
   accessToken?: string | null;
@@ -15,20 +16,15 @@ interface Props {
 
 export default function Header(props: Props) {
   const signInText = '로그인';
-  const signUpText = '회원가입';
-  const signOutText = '로그아웃';
-  const profileText = '나의 프로필';
-  const communityText = '커뮤니티';
 
   const styles = {
     button:
-      'mx-1 py-1 px-2 justify-center border-transparent rounded-lg text-sm font-medium whitespace-nowrap text-white bg-blue-800 hover:bg-blue-900',
+      'mx-1 py-1 px-4 w-full justify-center border-transparent rounded-full text-sm font-semibold whitespace-nowrap text-white bg-indigo-500 hover:bg-indigo-600',
   };
-
   return (
     <div
       data-testid="Header"
-      className="absolute top-0 left-0 w-full z-50 flex items-center justify-between h-12 px-4 bg-gray-100"
+      className="absolute top-0 left-0 w-full  z-50 flex items-center justify-between h-12 px-4 bg-gray-100"
     >
       <button
         id="logo_button"
@@ -43,27 +39,13 @@ export default function Header(props: Props) {
       {props.accessToken ? (
         /* when logged in  */
         <div className="flex-none">
-          <button
-            id="signout_button"
-            onClick={props.onSignOutClicked}
-            className={styles.button}
-          >
-            {signOutText}
-          </button>
-          <button
-            id="profile_button"
-            onClick={props.onProfileClicked}
-            className={styles.button}
-          >
-            {profileText}
-          </button>
-          <button
-            id="community_button"
-            onClick={props.onCommunityClicked}
-            className={styles.button}
-          >
-            {communityText}
-          </button>
+          <div>
+            <AvatarDropdwon
+              onCommunityClicked={props.onCommunityClicked}
+              onProfileClicked={props.onProfileClicked}
+              onSignOutClicked={props.onSignOutClicked}
+            />
+          </div>
         </div>
       ) : (
         /* when not logged in  */
@@ -74,20 +56,6 @@ export default function Header(props: Props) {
             className={styles.button}
           >
             {signInText}
-          </button>
-          <button
-            id="signup_button"
-            onClick={props.onSignUpClicked}
-            className={styles.button}
-          >
-            {signUpText}
-          </button>
-          <button
-            id="community_button"
-            onClick={props.onCommunityClicked}
-            className={styles.button}
-          >
-            {communityText}
           </button>
         </div>
       )}
