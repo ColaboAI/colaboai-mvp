@@ -95,8 +95,8 @@ export default function PlayerBar(props: Props) {
       data-testid="PlayerBar"
       className="fixed bottom-0 left-0 z-50 h-16 pt-1 px-4 sm:px-8 w-full flex items-center justify-between bg-gray-100"
     >
-      <div id="info" className="h-full py-2 flex sm:w-6/12 items-center w-3/12">
-        <div className="flex h-full sm:px-2 sm:py-1 sm:text-base sm:border-2 font-semibold  border-black rounded-lg text-[8px] items-center whitespace-pre-line truncate">
+      <div id="info" className="h-full py-2 flex sm:w-6/12 items-center w-4/12">
+        <div className="flex h-full sm:px-2 sm:py-1 w-8/12 sm:text-base sm:border-2 font-semibold  border-black rounded-lg text-xs items-center whitespace-pre-line truncate">
           {isMobile
             ? props.track
               ? `${props.track.song.title}`
@@ -129,7 +129,7 @@ export default function PlayerBar(props: Props) {
       </div>
       <div
         id="controller"
-        className="flex h-full w-6/12 py-2 justify-center items-stretch sm:text-xl"
+        className="flex h-full sm:w-6/12 py-2 justify-center items-stretch sm:text-xl"
       >
         <button
           className="sm:mx-2 sm:w-8 mx-1 w-4 outline-none"
@@ -161,7 +161,7 @@ export default function PlayerBar(props: Props) {
       </div>
       <div
         id="timer"
-        className="text-right sm:w-6/12 sm:text-lg text-gray-600 font-semibold text-xs w-3/12"
+        className="text-right sm:w-6/12 sm:text-lg text-gray-600 font-semibold text-xs w-4/12"
       >
         {`${formatMinute(currLength)} / ${formatMinute(length)}`}
       </div>
