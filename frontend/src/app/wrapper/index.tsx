@@ -127,7 +127,7 @@ export default function Wrapper(props: WrapperProps) {
           window.open('https://discord.gg/XCSuNDNUyX', '_blank');
         }}
       />
-      <div className="relative pt-16 pb-16 w-full h-full overflow-y-auto">
+      <div className="relative pt-16 pb-16 h-full overflow-y-auto">
         {props.children}
       </div>
       <PlayerBar

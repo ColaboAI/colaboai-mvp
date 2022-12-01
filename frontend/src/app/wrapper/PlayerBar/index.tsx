@@ -96,7 +96,7 @@ export default function PlayerBar(props: Props) {
       className="fixed bottom-0 left-0 z-50 h-16 pt-1 px-4 sm:px-8 w-full flex items-center justify-between bg-gray-100"
     >
       <div id="info" className="h-full py-2 flex sm:w-6/12 items-center w-4/12">
-        <div className="flex h-full sm:px-2 sm:py-1 w-8/12 sm:text-base sm:border-2 font-semibold  border-black rounded-lg text-xs items-center whitespace-pre-line truncate">
+        <div className="flex h-full sm:px-2 sm:py-1 w-8/12 sm:text-base font-semibold  border-black rounded-lg text-xs items-center whitespace-pre-line truncate">
           {isMobile
             ? props.track
               ? `${props.track.song.title}`
