@@ -16,6 +16,7 @@ export default function AvatarDropdown(props: Props) {
   const welcomeText = ' 님 반가워요!';
   const homeText = '홈';
   const profileText = '나의 프로필';
+  const guideText = '이용가이드';
   const communityText = '커뮤니티';
   const signOutText = '로그아웃';
 
@@ -86,6 +87,20 @@ export default function AvatarDropdown(props: Props) {
                 className={styles.button}
               >
                 {profileText}
+              </button>
+            </Menu.Item>
+            <Menu.Item>
+              <button
+                id="guide_button"
+                className={styles.button}
+                onClick={() => {
+                  window.open(
+                    'https://www.notion.so/colaboai/Onboarding-21fcbbda648e4f17a916736b681d4f12',
+                    '_blank',
+                  );
+                }}
+              >
+                {guideText}
               </button>
             </Menu.Item>
             <Menu.Item>
