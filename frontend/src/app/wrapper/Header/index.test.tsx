@@ -6,6 +6,7 @@ import Header from '.';
 test('should render', () => {
   render(
     <Header
+      userInfo={undefined}
       onSignInClicked={function (): void {
         throw new Error('Function not implemented.');
       }}

@@ -16,7 +16,7 @@ export default function Album(props: Props) {
     <div
       data-testid="Album"
       className="flex flex-col items-center w-full pb-8
-                 col-span-12 xs:col-span-6 sm:col-span-4 md:col-span-3 lg:col-span-3 xl:col-span-2"
+                 col-span-12 xs:col-start-3 xs:col-span-6 sm:col-start-2 sm:col-span-4 md:col-span-3 lg:col-span-3 xl:col-span-2"
     >
       <button
         data-testid="Title"

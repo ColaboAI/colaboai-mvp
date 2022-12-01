@@ -14,6 +14,7 @@ import { faHeart as faEmptyHeart } from '@fortawesome/free-regular-svg-icons';
 import Player from 'app/helper/Player';
 import { useInterval } from 'app/helper/Hooks';
 import { api } from 'api/band';
+import { useMediaQuery } from 'react-responsive';
 
 interface Props {
   track?: TrackInfo;
@@ -28,6 +29,7 @@ export default function PlayerBar(props: Props) {
   const [status, setStatus] = useState('');
   const progress = useRef<HTMLDivElement>(null);
   const bar = useRef<HTMLDivElement>(null);
+  const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
 
   useEffect(() => {
     player.onStatusChange = newStatus => {
@@ -93,14 +95,18 @@ export default function PlayerBar(props: Props) {
       data-testid="PlayerBar"
       className="fixed bottom-0 left-0 z-50 h-16 pt-1 px-4 sm:px-8 w-full flex items-center justify-between bg-gray-100"
     >
-      <div id="info" className="h-full py-2 flex w-6/12 items-center">
-        <div className="px-2 py-1 font-semibold border-2 border-black rounded-lg">
-          {props.track
+      <div id="info" className="h-full py-2 flex sm:w-6/12 items-center w-4/12">
+        <div className="flex h-full sm:px-2 sm:py-1 w-8/12 sm:text-base font-semibold  border-black rounded-lg text-xs items-center whitespace-pre-line truncate">
+          {isMobile
+            ? props.track
+              ? `${props.track.song.title}`
+              : 'Select Music'
+            : props.track
             ? `${props.track.song.title} - ${props.track.song.singer}`
             : 'Select Music'}
         </div>
         <button
-          className="h-full mx-2 px-2 text-xl outline-none"
+          className="h-full mx-2 sm:px-2 sm:text-xl outline-none"
           id="like-button"
           onClick={() => {
             props.track && props.onLikeClicked(props.track);
@@ -123,17 +129,17 @@ export default function PlayerBar(props: Props) {
       </div>
       <div
         id="controller"
-        className="flex h-full py-2 justify-center items-stretch text-xl"
+        className="flex h-full sm:w-6/12 py-2 justify-center items-stretch sm:text-xl"
       >
         <button
-          className="mx-2 w-8 outline-none"
+          className="sm:mx-2 sm:w-8 mx-1 w-4 outline-none"
           id="prev-button"
           onClick={onPrevClicked}
         >
           <FontAwesomeIcon icon={faStepBackward} />
         </button>
         <button
-          className="mx-2 w-8 outline-none"
+          className="sm:mx-2 sm:w-8 mx-1 w-4 outline-none"
           id="play-button"
           onClick={onPlayClicked}
         >
@@ -146,14 +152,17 @@ export default function PlayerBar(props: Props) {
           )}
         </button>
         <button
-          className="mx-2 w-8 outline-none"
+          className="sm:mx-2 sm:w-8 mx-1 w-4 outline-none"
           id="next-button"
           onClick={onNextClicked}
         >
           <FontAwesomeIcon icon={faStepForward} />
         </button>
       </div>
-      <div id="timer" className="text-right w-6/12 text-gray-600 font-medium">
+      <div
+        id="timer"
+        className="text-right sm:w-6/12 sm:text-lg text-gray-600 font-semibold text-xs w-4/12"
+      >
         {`${formatMinute(currLength)} / ${formatMinute(length)}`}
       </div>
       <div

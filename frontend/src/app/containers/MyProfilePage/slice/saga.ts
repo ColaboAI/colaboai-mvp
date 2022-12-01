@@ -4,6 +4,7 @@ import * as AT from 'api/actionTypes';
 import * as actions from 'api/actions';
 import { api } from 'api/band';
 import { ActionType } from 'typesafe-actions';
+import { wrapperActions } from 'app/wrapper/slice';
 
 // TODO: 일반 유저의 프로필을 불러오는 액션
 // Root saga
@@ -45,6 +46,7 @@ export function* postProfileRequest(
   try {
     const postProfileResponse = yield api.postUserInfo(action.payload);
     yield put(profileActions.successPostResponse(postProfileResponse.data));
+    yield put(wrapperActions.setUserFromProfilePage(postProfileResponse.data));
   } catch (e: any) {
     yield put(profileActions.errorPostResponse(e));
   }

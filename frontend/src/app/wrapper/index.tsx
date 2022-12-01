@@ -120,6 +120,7 @@ export default function Wrapper(props: WrapperProps) {
   return (
     <div data-testid="Wrapper" className="relative w-full h-full">
       <Header
+        userInfo={wrapperState.user}
         accessToken={wrapperState.accessToken}
         onSearchClicked={onSearchClicked}
         onSignInClicked={onSignInClicked}
