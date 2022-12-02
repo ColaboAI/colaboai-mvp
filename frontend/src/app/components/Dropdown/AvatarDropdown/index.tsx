@@ -33,11 +33,11 @@ export default function AvatarDropdown(props: Props) {
     <Menu as="div" className="relative inline-block text-left">
       <div>
         <Menu.Button className="inline-flex w-full justify-center border-transparent px-4 py-2">
-          {props.userInfo?.photo !== null ? (
+          {props.userInfo && props.userInfo.photo !== null ? (
             <div>
               <img
                 id="avatarDropdwonButton"
-                src={props.userInfo?.photo}
+                src={props.userInfo.photo}
                 alt="User Avatar"
                 className="w-8 h-8 rounded-full border cursor-pointer"
               />

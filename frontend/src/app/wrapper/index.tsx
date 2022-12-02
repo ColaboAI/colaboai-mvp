@@ -36,7 +36,7 @@ export default function Wrapper(props: WrapperProps) {
     }
     if (at) {
       dispatch(wrapperActions.setAccessToken(at));
-      if (wrapperState.user === undefined) {
+      if (wrapperState.user === undefined || wrapperState.user === null) {
         dispatch(apiActions.loadMyProfileInAuth.request());
       }
     } else {

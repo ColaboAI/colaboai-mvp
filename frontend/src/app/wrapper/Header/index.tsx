@@ -37,7 +37,7 @@ export default function Header(props: Props) {
       <div className="flex-auto sr-only xs:not-sr-only xs:mx-4 max-w-lg">
         <Search onSearchClicked={props.onSearchClicked} />
       </div>
-      {props.accessToken ? (
+      {props.accessToken && props.userInfo ? (
         /* when logged in  */
         <div className="flex-none">
           <div>
