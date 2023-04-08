@@ -1,5 +1,4 @@
-# MetaBand [![Build Status](https://travis-ci.com/swsnu/swpp2021-team9.svg?branch=main)](https://travis-ci.com/swsnu/swpp2021-team9) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=swsnu_swpp2021-team9&metric=alert_status)](https://sonarcloud.io/dashboard?id=swsnu_swpp2021-team9) [![Coverage Status](https://coveralls.io/repos/github/swsnu/swpp2021-team9/badge.svg?branch=main)](https://coveralls.io/github/swsnu/swpp2021-team9?branch=main)
-
+# MetaBand 
 In MetaBand, people can create **_band cover contents_** regardless of time and space. A **_cover_** is a performance of an existing song by other vocalists/instrumentalists. In MetaBand, you can **_record & upload_** song covers and **_listen_** to other people's covers.
 
 MetaBand specializes in connectivity between covers. Among the covers of a particular song,
